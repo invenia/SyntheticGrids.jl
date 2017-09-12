@@ -421,7 +421,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public Functions",
     "title": "SyntheticGrids.to_pandapower",
     "category": "Function",
-    "text": "    to_pandapower(grid::Grid)\n\nExport a 'grid' to pandapower format.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\n    to_pandapower(grid::Grid, filename::AbstractString)\n\nExport a 'grid' to pandapower format and saves it as 'filename'. Pandapower requires 'filename' to be a '.p' file.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\n"
+    "text": "to_pandapower(grid::Grid)\n\nExport a 'grid' to pandapower format.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\nto_pandapower(grid::Grid, filename::AbstractString)\n\nExport a 'grid' to pandapower format and saves it as 'filename'. Pandapower requires 'filename' to be a '.p' file.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\n"
 },
 
 {
@@ -433,11 +433,67 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "Functions.html#SyntheticGrids.total_links",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.total_links",
+    "category": "Function",
+    "text": "total_links(con_mat::AbstractMatrix{<:Real})\n\nReturn the total number of links in a system with connectivity matrix con_mat.\n\n\n\n"
+},
+
+{
+    "location": "Functions.html#SyntheticGrids.mean_node_deg",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.mean_node_deg",
+    "category": "Function",
+    "text": "mean_node_deg(con_mat::AbstractMatrix{<:Real})\n\nReturn the average nodal degree of a system with connectivity matrix con_mat.\n\n\n\n"
+},
+
+{
+    "location": "Functions.html#SyntheticGrids.cluster_coeff",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.cluster_coeff",
+    "category": "Function",
+    "text": "cluster_coeff(con_mat::AbstractMatrix{<:Real})\n\nReturn the clustering coefficient of a system with connectivity matrix con_mat.\n\n\n\n"
+},
+
+{
+    "location": "Functions.html#SyntheticGrids.test_connectivity",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.test_connectivity",
+    "category": "Function",
+    "text": "test_connectivity(con_mat::AbstractMatrix{<:Real}, verb=true)\n\nReturn true if the system with connectivity matrix con_matis connected and false otherwise. If verb=true the result will be printed onscreen together with the Fiedler eigenvalue.\n\n\n\n"
+},
+
+{
+    "location": "Functions.html#SyntheticGrids.mean_shortest_path",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.mean_shortest_path",
+    "category": "Function",
+    "text": "mean_shortest_path(conmat::AbstractMatrix{<:Real})\n\nCompute the mean shortest distance between nodes for a network represented by conmat. The conmat matrix should specify the distance between each connected node and be equal to zero whenever two nodes are not connected. Distances are computed using Dijkstra's algorithm.\n\n\n\nmean_shortest_path(conmat::AbstractMatrix{<:Real}, distmat::AbstractMatrix{<:Real})\n\nCompute the mean shortest distance between nodes for a network with connectivity matrix conmat and distances between nodes given by distmat. Distances are computed using Dijkstra's algorithm.\n\n\n\n"
+},
+
+{
+    "location": "Functions.html#SyntheticGrids.robustness_line",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.robustness_line",
+    "category": "Function",
+    "text": "robustness_line(con_mat::AbstractMatrix{<:Real}, n=1000)\n\nReturn the average number of transmission lines that have to be randomly removed from a system with connectivity matrix con_mat before it becomes disconnected. Average is computed over n iterations.\n\n\n\n"
+},
+
+{
+    "location": "Functions.html#SyntheticGrids.robustness_node",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.robustness_node",
+    "category": "Function",
+    "text": "robustness_node(con_mat::AbstractMatrix{<:Real}, n=1000)\n\nReturn the average number of nodes that have to be randomly removed from a system with connectivity matrix con_mat before it becomes disconnected. Average is computed over n iterations.\n\n\n\n"
+},
+
+{
     "location": "Functions.html#Checking-Functions-1",
     "page": "Public Functions",
     "title": "Checking Functions",
     "category": "section",
-    "text": "total_links\n\nmean_node_deg\n\ncluster_coeff\n\ncluster_coeff_degw\n\ntest_connectivity\n\nmean_shortest_path\n\nrobustness_line\n\nrobustness_node"
+    "text": "total_links\n\nmean_node_deg\n\ncluster_coeff\n\ntest_connectivity\n\nmean_shortest_path\n\nrobustness_line\n\nrobustness_node"
 },
 
 {
@@ -457,11 +513,91 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "Private.html#SyntheticGrids.haversine",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.haversine",
+    "category": "Function",
+    "text": "haversine{T<:Real}(c1::Tuple{T,T}, c2::Tuple{T,T})\n\nCompute distance between two pairs of latitude and longitude using the haversine formula.\n\n\n\nhaversine(b1::Bus, b2::Bus)\n\nCompute distance between two buses from their latitude and longitude using the haversine formula.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.subs_dist",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.subs_dist",
+    "category": "Function",
+    "text": "subs_dist(inds1, inds2, buses, b_dist)\n\nCompute distance between two substations using equation 1 from the REFERENCE.\n\nREFERENCE: Birchfield, Adam B., et al. \"Grid Structural Characteristics as Validation Criteria for Synthetic Networks.\" IEEE Transactions on Power Systems (2016).\n\n\n\n"
+},
+
+{
     "location": "Private.html#Distances-1",
     "page": "Private Functions",
     "title": "Distances",
     "category": "section",
-    "text": "haversine\n\nsubs_dist"
+    "text": "SyntheticGrids.haversine\n\nSyntheticGrids.subs_dist"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.twst!",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.twst!",
+    "category": "Function",
+    "text": "twst!(grid, k)\n\nExecute Tunable Weight Spannning Tree algorithm for the grid using weight 'k'.\n\nREFERENCE: Soltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" Power and Energy Society General Meeting (PESGM), 2016. IEEE, 2016.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.reinforce!",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.reinforce!",
+    "category": "Function",
+    "text": "reinforce!(grid, m, a, b, g, t, N)\n\nExecute the Reinforcement procedure to increase robustness of a grid.\n\nArguments:\n\nm: total number of connections\na, b, g, t: paramaters of the model (see REFERENCE)\nN: number of nearest neighbors in the average distance computation\n\nREFERENCE: Soltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" Power and Energy Society General Meeting (PESGM), 2016. IEEE, 2016.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.connect_buses!",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.connect_buses!",
+    "category": "Function",
+    "text": "connect_buses!(grid)\n\nCreate reference links between buses that are connected according to the connectivity matrix of the grid.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.connect_subs!",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.connect_subs!",
+    "category": "Function",
+    "text": "connect_subs!(grid)\n\nDetermine which substations are connected to each other through their buses.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.cluster_loads!",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.cluster_loads!",
+    "category": "Function",
+    "text": "cluster_loads!(grid,nload)\n\nExecute aglomerative clustering of all load buses into 'nload' substations using geographic distances as metric.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.fill_gen!",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.fill_gen!",
+    "category": "Function",
+    "text": "fill_gen!(sub, gens, MW)\n\nGroup generators ('gens') into substations ('subs') by geographic proximity until generation threshold 'MW' is reached.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.cluster_load_gen!",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.cluster_load_gen!",
+    "category": "Function",
+    "text": "cluster_load_gen!(grid, nboth)\n\nCreate 'nboth' substations with both load and generation, chosen randomly.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.cluster_gens!",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.cluster_gens!",
+    "category": "Function",
+    "text": "cluster_gens!(grid, ngen)\n\nExecute aglomerative clustering of generators into 'ngen' substations.\n\n\n\n"
 },
 
 {
@@ -469,7 +605,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Private Functions",
     "title": "Topology building",
     "category": "section",
-    "text": "twst!\n\nreinforce!\n\nconnect_buses!\n\nconnect_subs!\n\ncluter_loads!\n\nfill_gen!\n\ncluster_load_gen!\n\ncluster_gens!"
+    "text": "SyntheticGrids.twst!\n\nSyntheticGrids.reinforce!\n\nSyntheticGrids.connect_buses!\n\nSyntheticGrids.connect_subs!\n\nSyntheticGrids.cluster_loads!\n\nSyntheticGrids.fill_gen!\n\nSyntheticGrids.cluster_load_gen!\n\nSyntheticGrids.cluster_gens!"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.laplacian",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.laplacian",
+    "category": "Function",
+    "text": "laplacian(con_mat::AbstractMatrix{<:Real})\n\nReturn the Laplacian matrix for a graph defined by adjacency matrix con_mat.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.dijkstra",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.dijkstra",
+    "category": "Function",
+    "text": "dijkstra(con_mat::AbstractMatrix{<:Real}, v1)\n\nCompute minimum distances to each node in the network with connectivity matrix con_mat, starting from node v1, using Dijkstra's algorithm.\n\n\n\n"
 },
 
 {
@@ -477,7 +629,31 @@ var documenterSearchIndex = {"docs": [
     "page": "Private Functions",
     "title": "Graphs",
     "category": "section",
-    "text": "laplacian\n\ndijskstra"
+    "text": "SyntheticGrids.laplacian\n\nSyntheticGrids.dijkstra"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.linear_imped",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.linear_imped",
+    "category": "Function",
+    "text": "linear_imped(a::Bus, b::Bus)\n\nReturn an impedance value for a transmission line connecting buses a and b, using a simple linear approximation. This value is loosely based on the two references below. Values based on resistances for dc currents at 50C and 350kV lines.\n\nREF 1: Electric Power Research Institute (EPRI). Transmission Line Reference Book, 345 kV and Above. Palo Alto, CA: The Institute, 1975. REF 2: J. Glover, M. Sarma and T. Overbye, Power System Analysis and Design. Stamford, CT: Cengage Learning, 2012.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.rand_imped",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.rand_imped",
+    "category": "Function",
+    "text": "rand_imped(a::Bus, b::Bus)\n\nReturn an impedance value for a transmission line connecting buses a and b, using a simple linear approximation with a randomly chosen coefficient. The range we adopted is based on the values for ACSR cables from the ref: J. Glover, M. Sarma and T. Overbye, Power System Analysis and Design. Stanford, CT: Cengage Learning, 2012.\n\n\n\n"
+},
+
+{
+    "location": "Private.html#SyntheticGrids.volt_cap",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.volt_cap",
+    "category": "Function",
+    "text": "volt_cap(a::Bus, b::Bus)\n\nReturn a current carrying capacity value for a transmission line connecting buses a and b based on their operating voltages. This value is loosely based on the reference: Electric Power Research Institute (EPRI). Transmission Line Reference Book, 345 kV and Above. Palo Alto, CA: The Institute, 1975.\n\n\n\n"
 },
 
 {
@@ -485,7 +661,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Private Functions",
     "title": "Transmission Line properties",
     "category": "section",
-    "text": "linear_imped\n\nrand_imped\n\nvolt_cap"
+    "text": "SyntheticGrids.linear_imped\n\nSyntheticGrids.rand_imped\n\nSyntheticGrids.volt_cap"
 },
 
 ]}
