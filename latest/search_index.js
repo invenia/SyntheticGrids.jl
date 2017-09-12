@@ -330,23 +330,23 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#",
-    "page": "Functions",
-    "title": "Functions",
+    "page": "Public Functions",
+    "title": "Public Functions",
     "category": "page",
     "text": ""
 },
 
 {
-    "location": "Functions.html#Functions-1",
-    "page": "Functions",
-    "title": "Functions",
+    "location": "Functions.html#Public-Functions-1",
+    "page": "Public Functions",
+    "title": "Public Functions",
     "category": "section",
     "text": ""
 },
 
 {
     "location": "Functions.html#SyntheticGrids.place_loads_from_zips!",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "SyntheticGrids.place_loads_from_zips!",
     "category": "Function",
     "text": "place_loads_from_zips!(\n    grid::Grid;\n    latlim = (-Inf,Inf),\n    longlim = (-Inf,Inf),\n    datapath = CENSUSPATH,\n    loadfunc = linearload,\n    voltfunc = randvolt\n)\n\nCreate load buses based on zipcode information.\n\nArguments\n\ngrid: The synthetic grid instance that will be altered.\nlatlim: Tuple of the form (minimum latitude, maximum latitude).\nlonglim: Tuple of the form (minimum longitude, maximum longitude).\ndatapath: Path to the text file containing census information.\nloadfunc: Function for computing bus load based on some rule.\nvoltfunc: Function for computing bus voltage based on some rule.\n\nREFERENCE: https://www.census.gov/geo/maps-data/data/gazetteer2010.html\n\n\n\nplace_loads_from_zips!(\n    grid::Grid,\n    geolim::Function;\n    datapath = CENSUSPATH,\n    loadfunc = linearload,\n    voltfunc = randvolt\n)\n\nCreate load buses based on zipcode information.\n\nArguments\n\ngrid: The synthetic grid instance that will be altered.\ngeolim: Function that receives a latitude-longitude pair and returns true or false.\n\nSpecifies the region of interest.\n\ndatapath: Path to the text file containing census information.\nloadfunc: Function for computing bus load based on some rule.\nvoltfunc: Function for computing bus voltage based on some rule.\n\nREFERENCE: https://www.census.gov/geo/maps-data/data/gazetteer2010.html\n\n\n\n"
@@ -354,7 +354,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#SyntheticGrids.place_gens_from_data!",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "SyntheticGrids.place_gens_from_data!",
     "category": "Function",
     "text": "place_gens_from_data!(\n    grid::Grid,\n    plants::Array,\n    pfactorfunc::Function = pfacwavg\n)\n\nCreate generation buses based on power plant data.\n\nArguments:\n\ngrid: Grid instance which will be populated.\nplants: Power plant information already parsed.\npfactorfunc: Function for computing bus power factor based on some rule.\n\n\n\nplace_gens_from_data!(\n    grid::Grid;\n    latlim::Tuple = (-Inf, Inf),\n    longlim::Tuple = (-Inf, Inf),\n    jsonpath = GENJSONPATH,\n    pfactorfunc::Function = pfacwavg,\n)\n\nCreate generation buses based on power plant data.\n\nArguments:\n\ngrid: Grid instance which will be populated.\nlatlim: Tuple of the form (minimum latitude, maximum latitude).\nlonglim: Tuple of the form (minimum longitude, maximum longitude).\njsonpath: Path to the JSON file with the generator data.\npfactorfunc: Function for computing bus power factor based on some rule.\n\nREFERENCE: https://www.eia.gov/electricity/data/eia860/index.html\n\n\n\nplace_gens_from_data!(\n    grid::Grid,\n    geolim::Function;\n    jsonpath = GENJSONPATH,\n    pfactorfunc::Function = pfacwavg,\n)\n\nCreate generation buses based on power plant data.\n\nArguments:\n\ngrid: Grid instance which will be populated.\ngeolim: Function that receives a latitude-longitude pair and returns true or false.\n\nSpecifies the region of interest.\n\njsonpath: Path to the JSON file with the generator data.\npfactorfunc: Function for computing bus power factor based on some rule.\n\nREFERENCE: https://www.eia.gov/electricity/data/eia860/index.html\n\n\n\n"
@@ -362,7 +362,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#SyntheticGrids.connect!",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "SyntheticGrids.connect!",
     "category": "Function",
     "text": "connect!(grid::Grid; k=2.5, m=-1, a=1, b=3.2, g=2.5, t=2, N=10)\n\nConnect buses in an electric grid.\n\nArguments:\n\nk: weight of the spanning tree (see REFERENCE)\nm: total number of connections (computed from the # of nodes if default)\na, b, g, t: paramaters of the model (see REFERENCE)\nN: number of nearest neighbors in the average distance computation\n\nREFERENCE: Soltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" Power and Energy Society General Meeting (PESGM), 2016. IEEE, 2016.\n\n\n\n"
@@ -370,7 +370,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#SyntheticGrids.cluster!",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "SyntheticGrids.cluster!",
     "category": "Function",
     "text": "cluster!(grid::Grid, nloads, nboth, ngens)\n\nCluster all nodes of a grid into 'nloads' load substations, 'ngens' generation substations and 'nboth' substations with both load and generation.\n\nREFERENCE: Birchfield, Adam B., et al. \"Grid Structural Characteristics as Validation Criteria for Synthetic Networks.\" IEEE Transactions on Power Systems (2016).\n\n\n\n"
@@ -378,7 +378,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#SyntheticGrids.create_lines!",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "SyntheticGrids.create_lines!",
     "category": "Function",
     "text": "create_lines!(grid::Grid; impedfunc = linear_imped, capfunc = volt_cap)\n\nCreate transmission lines for a synthetic grid. Line impedancies are determined by impedfunc and line capacities are calculated via capfunc. This function will only work after the grid has been connected through the connect!() function.\n\n\n\n"
@@ -386,7 +386,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#SyntheticGrids.add_load!",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "SyntheticGrids.add_load!",
     "category": "Function",
     "text": "add_load!(grid::Grid, args...; reconnect = false)\n\nAdd LoadBus to grid by calling the LoadBus(coords, load, volt, pop, connected_to = Set(), connections = Set()) method with args... as arguments. If reconnect = true, all connections will be remade.\n\n\n\n"
@@ -394,7 +394,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#SyntheticGrids.add_gen!",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "SyntheticGrids.add_gen!",
     "category": "Function",
     "text": "add_gen!(grid::Grid, args...; reconnect = false)\n\nAdd Genbus to grid by calling the GenBus(coords, gen, volt, tech, connected_to = Set(), connections = Set(), pfactor = -1, summgen = -1, wintgen = -1, gens = []) method with args... as arguments. If reconnect = true, all connections will be remade.\n\n\n\n"
@@ -402,7 +402,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#SyntheticGrids.add_substation!",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "SyntheticGrids.add_substation!",
     "category": "Function",
     "text": "add_substation!(grid::Grid, args...; reconnect = false)\n\nAdd Substation to grid by calling the Substation(coords, volts, load, gen, pop, con = Set(), group = []) method with args... as arguments.\n\n\n\n"
@@ -410,34 +410,82 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "Functions.html#Main-Functions-1",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "Main Functions",
     "category": "section",
     "text": "place_loads_from_zips!\n\nplace_gens_from_data!\n\nconnect!\n\ncluster!\n\ncreate_lines!\n\nadd_load!\n\nadd_gen!\n\nadd_substation!"
 },
 
 {
-    "location": "Functions.html#Export/Import-Functions-1",
-    "page": "Functions",
-    "title": "Export/Import Functions",
-    "category": "section",
-    "text": "to_pandapower\n\nsave_pp_grid\n\nload_pp_grid"
+    "location": "Functions.html#SyntheticGrids.to_pandapower",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.to_pandapower",
+    "category": "Function",
+    "text": "    to_pandapower(grid::Grid)\n\nExport a 'grid' to pandapower format.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\n    to_pandapower(grid::Grid, filename::AbstractString)\n\nExport a 'grid' to pandapower format and saves it as 'filename'. Pandapower requires 'filename' to be a '.p' file.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\n"
 },
 
 {
-    "location": "Functions.html#Topology-Building-Functions-1",
-    "page": "Functions",
-    "title": "Topology Building Functions",
+    "location": "Functions.html#Export/Import-Functions-1",
+    "page": "Public Functions",
+    "title": "Export/Import Functions",
     "category": "section",
-    "text": "TWST!\n\nreinforce!\n\nconnect_buses!\n\nconnect_subs!\n\ncluster_loads!\n\ncluster_load_gen!\n\ncluster_gens!"
+    "text": "to_pandapower"
 },
 
 {
     "location": "Functions.html#Checking-Functions-1",
-    "page": "Functions",
+    "page": "Public Functions",
     "title": "Checking Functions",
     "category": "section",
-    "text": "total_links\n\nmean_node_deg\n\ncluster_coeff\n\ncluster_coeff_degw\n\ntest_connectivity\n\nmean_short_path_hop\n\nmean_short_path_real_bus\n\nmean_short_path_real_sub\n\nrobustness_line\n\nrobustness_node"
+    "text": "total_links\n\nmean_node_deg\n\ncluster_coeff\n\ncluster_coeff_degw\n\ntest_connectivity\n\nmean_shortest_path\n\nrobustness_line\n\nrobustness_node"
+},
+
+{
+    "location": "Private.html#",
+    "page": "Private Functions",
+    "title": "Private Functions",
+    "category": "page",
+    "text": ""
+},
+
+{
+    "location": "Private.html#Private-Functions-1",
+    "page": "Private Functions",
+    "title": "Private Functions",
+    "category": "section",
+    "text": ""
+},
+
+{
+    "location": "Private.html#Distances-1",
+    "page": "Private Functions",
+    "title": "Distances",
+    "category": "section",
+    "text": "haversine\n\nsubs_dist"
+},
+
+{
+    "location": "Private.html#Topology-building-1",
+    "page": "Private Functions",
+    "title": "Topology building",
+    "category": "section",
+    "text": "twst!\n\nreinforce!\n\nconnect_buses!\n\nconnect_subs!\n\ncluter_loads!\n\nfill_gen!\n\ncluster_load_gen!\n\ncluster_gens!"
+},
+
+{
+    "location": "Private.html#Graphs-1",
+    "page": "Private Functions",
+    "title": "Graphs",
+    "category": "section",
+    "text": "laplacian\n\ndijskstra"
+},
+
+{
+    "location": "Private.html#Transmission-Line-properties-1",
+    "page": "Private Functions",
+    "title": "Transmission Line properties",
+    "category": "section",
+    "text": "linear_imped\n\nrand_imped\n\nvolt_cap"
 },
 
 ]}
