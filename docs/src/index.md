@@ -35,7 +35,7 @@ REFERENCES:
 ## Basic Usage
 
 ```julia
-grid = SynGrid()
+grid = Grid()
 ```
 
 Create new (empty) grid
@@ -54,13 +54,13 @@ Build generation buses from data
 (buses may also be placed manually)
 
 ```julia
-connect_grid!(grid)
+connect!(grid)
 ```
 
 Generate node connections
 
 ```julia
-cluster_buses!(grid, nloads, nboth, ngens)
+cluster!(grid, nloads, nboth, ngens)
 ```
 
 Build substations by clustering nodes (optional)
