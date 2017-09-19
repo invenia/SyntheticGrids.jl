@@ -37,7 +37,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Basic Usage",
     "category": "section",
-    "text": "grid = SynGrid()Create new (empty) gridplace_loads_from_zips!(grid, latitude limits, longitude limits)Build load buses from zipcodesplace_gens_from_data!(grid, latitude limits, longitude limits)Build generation buses from data (buses may also be placed manually)connect_grid!(grid)Generate node connectionscluster_buses!(grid, nloads, nboth, ngens)Build substations by clustering nodes (optional)create_lines!(grid)Build transmission lines from connection topology"
+    "text": "grid = Grid()Create new (empty) gridplace_loads_from_zips!(grid, latitude limits, longitude limits)Build load buses from zipcodesplace_gens_from_data!(grid, latitude limits, longitude limits)Build generation buses from data (buses may also be placed manually)connect!(grid)Generate node connectionscluster!(grid, nloads, nboth, ngens)Build substations by clustering nodes (optional)create_lines!(grid)Build transmission lines from connection topology"
 },
 
 {
