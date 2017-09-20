@@ -533,11 +533,10 @@ function to_pandapower(grid::Grid,)
                 controllable = false # for OPF
             )
         else
-        # We are using static generators because the other type demands more attributes
-        # we don't have atm. The type of the generator is being stored in 'name' instead
+        # The type of the generator is being stored in 'name' instead
         # of in 'type' because Julia seems to have problems with a parameter called 'type'.
             for gen in buses(grid)[i].gens
-                pp[:create_sgen](
+                pp[:create_gen](
                     pgrid,
                     bus = (i-1), # Adopting zero indexing because this is for Python.
                     p_kw = -1000 * gen.cap, # negative by pandapower convention
