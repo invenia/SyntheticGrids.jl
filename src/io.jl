@@ -520,7 +520,8 @@ function to_pandapower(grid::Grid,)
         pp[:create_bus](
             pgrid,
             voltage(buses(grid)[i]),
-            index = (i - 1) # Adopting zero indexing because this is for Python.
+            index = (i - 1), # Adopting zero indexing because this is for Python.
+            geodata = (buses(grid)[i].coords.lat, buses(grid)[i].coords.lon)
         ) # Despite what the documentation says, 'create_bus' requires voltage.
     end
     # Create loads and generators
