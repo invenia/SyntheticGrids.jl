@@ -184,7 +184,8 @@ function reinforce!(grid::Grid, m, a, b, g, t, N)
     unorm_probs = Real[]
     inds = Int[]
     degrees = sum(grid.bus_conn, 1) # this gives the node degrees
-    degrees = reshape(degrees, length(degrees)) # just so we can zip it later
+    degrees = float(reshape(degrees, length(degrees))) # Just so we can zip it later. Using
+    # float here in order to avoid problems when doing Int^(-t).
     if n >= LARGE_GRID_N # only sample nodes with degree < 3
         unorm_probs = [av_dist[i]^(-a) for i in 1:n if degrees[i] < 3]
         inds = [i for i in 1:n if degrees[i] < 3]
