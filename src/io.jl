@@ -386,72 +386,72 @@ function place_gens_from_data!(
     place_gens_from_data!(grid, plants, pfactorfunc)
 end
 
-"""
-    place_gens_from_data_old!(grid::Grid, latlim=(-Inf,Inf),
-                      longlim=(-Inf,Inf), datapath="Generator_data.dat",
-                      coordpath = "Generator_coord.dat", pfactorfunc = pfacwavg)
-
-OBSOLETE. Create generation buses based on power plant data.
-Obsolete now that we have a standalone function for creating a json with the
-data. Reading in the json file via place_gens_from_data!() is considerably faster.
-
-# Arguments:
-* grid: Grid instance which will be populated.
-* latlim: Tuple of the form (minimum latitude, maximum latitude).
-* longlim: Tuple of the form (minimum longitude, maximum longitude).
-* datapath: Path to the text file containing detailed generator information.
-* coordpath: Path to the text file containing power plant information.
-* pfactorfunc: Function for computing bus power factor based on some rule.
-
-REFERENCE: https://www.eia.gov/electricity/data/eia860/index.html
-"""
-function place_gens_from_data_old!(
-    grid::Grid;
-    latlim = (-Inf, Inf),
-    longlim = (-Inf, Inf),
-    datapath = GENDATAPATH,
-    coordpath = GENCOORDPATH,
-    pfactorfunc = pfacwavg,
-)
-    plants = get_gen_data(datapath, coordpath)
-    plants = [
-                p for p in plants if p[1][1][1] > latlim[1] &&
-                p[1][1][1] < latlim[2] && p[1][1][2] > longlim[1] &&
-                p[1][1][2] < longlim[2]
-            ]
-    # Creating generators
-    genbs = Vector(plants)
-    for p in plants
-        push!(
-            genbs,
-            [
-                Generator(
-                    g[1],
-                    g[2],
-                    g[3],
-                    g[4],
-                    g[5],
-                    g[6],
-                    g[7],
-                    g[8],
-                    g[9],
-                    g[10]
-                ) for g in p
-            ]
-        )
-    end
-    # Formatting generators
-    for p in genbs
-        for g in p
-            format_gen!(g)
-        end
-    end
-    # Creating generation buses
-    for p in genbs
-        op = filter(g -> g.status in ["OP", "SP"], p)
-        push!(buses(grid), GenBus(length(buses(grid)) + 1, p, op, pfactorfunc))
-    end
-end
+# """
+#     place_gens_from_data_old!(grid::Grid, latlim=(-Inf,Inf),
+#                       longlim=(-Inf,Inf), datapath="Generator_data.dat",
+#                       coordpath = "Generator_coord.dat", pfactorfunc = pfacwavg)
+#
+# OBSOLETE. Create generation buses based on power plant data.
+# Obsolete now that we have a standalone function for creating a json with the
+# data. Reading in the json file via place_gens_from_data!() is considerably faster.
+#
+# # Arguments:
+# * grid: Grid instance which will be populated.
+# * latlim: Tuple of the form (minimum latitude, maximum latitude).
+# * longlim: Tuple of the form (minimum longitude, maximum longitude).
+# * datapath: Path to the text file containing detailed generator information.
+# * coordpath: Path to the text file containing power plant information.
+# * pfactorfunc: Function for computing bus power factor based on some rule.
+#
+# REFERENCE: https://www.eia.gov/electricity/data/eia860/index.html
+# """
+# function place_gens_from_data_old!(
+#     grid::Grid;
+#     latlim = (-Inf, Inf),
+#     longlim = (-Inf, Inf),
+#     datapath = GENDATAPATH,
+#     coordpath = GENCOORDPATH,
+#     pfactorfunc = pfacwavg,
+# )
+#     plants = get_gen_data(datapath, coordpath)
+#     plants = [
+#                 p for p in plants if p[1][1][1] > latlim[1] &&
+#                 p[1][1][1] < latlim[2] && p[1][1][2] > longlim[1] &&
+#                 p[1][1][2] < longlim[2]
+#             ]
+#     # Creating generators
+#     genbs = Vector(plants)
+#     for p in plants
+#         push!(
+#             genbs,
+#             [
+#                 Generator(
+#                     g[1],
+#                     g[2],
+#                     g[3],
+#                     g[4],
+#                     g[5],
+#                     g[6],
+#                     g[7],
+#                     g[8],
+#                     g[9],
+#                     g[10]
+#                 ) for g in p
+#             ]
+#         )
+#     end
+#     # Formatting generators
+#     for p in genbs
+#         for g in p
+#             format_gen!(g)
+#         end
+#     end
+#     # Creating generation buses
+#     for p in genbs
+#         op = filter(g -> g.status in ["OP", "SP"], p)
+#         push!(buses(grid), GenBus(length(buses(grid)) + 1, p, op, pfactorfunc))
+#     end
+# end
 
 # Here we will adopt transmission lines of type 'Line' with predefined values. We need
 # their predefined values because we do not have all properties required to create a
@@ -520,7 +520,8 @@ function to_pandapower(grid::Grid,)
         pp[:create_bus](
             pgrid,
             voltage(buses(grid)[i]),
-            index = (i - 1) # Adopting zero indexing because this is for Python.
+            index = (i - 1), # Adopting zero indexing because this is for Python.
+            geodata = (buses(grid)[i].coords.lat, buses(grid)[i].coords.lon)
         ) # Despite what the documentation says, 'create_bus' requires voltage.
     end
     # Create loads and generators
@@ -533,11 +534,10 @@ function to_pandapower(grid::Grid,)
                 controllable = false # for OPF
             )
         else
-        # We are using static generators because the other type demands more attributes
-        # we don't have atm. The type of the generator is being stored in 'name' instead
+        # The type of the generator is being stored in 'name' instead
         # of in 'type' because Julia seems to have problems with a parameter called 'type'.
             for gen in buses(grid)[i].gens
-                pp[:create_sgen](
+                pp[:create_gen](
                     pgrid,
                     bus = (i-1), # Adopting zero indexing because this is for Python.
                     p_kw = -1000 * gen.cap, # negative by pandapower convention

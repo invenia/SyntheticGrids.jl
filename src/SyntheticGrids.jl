@@ -6,8 +6,8 @@ ENV["NUMBA_DISABLE_JIT"] = 1
 
 if Base.JLOptions().can_inline == 1
     warnstring = ```
-        SyntheticGrids.jl may not run properly if inlinning is allowed.
-        Please start Julia with `--inline=no`
+        SyntheticGrids.jl may not run properly if inlinning is enabled.
+        Please start Julia with \`--inline=no\`
         ```
     warn(warnstring)
 end
