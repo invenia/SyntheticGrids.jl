@@ -663,3 +663,161 @@ function load_grid(inname)
     end
     return grid
 end
+
+"""
+    save(grid::Grid, outfile::AbstractString)
+
+Save a `grid` in a format that can be recovered later. The format adopted is a JSON file
+with a particular structure.
+"""
+function save(grid::Grid, outfile::AbstractString)
+    out_dict = Dict()
+    out_dict["seed"] = grid.seed
+    bus_vec = []
+    for b in buses(grid)
+        if isa(b, LoadBus)
+            push!(bus_vec, Dict(
+                "type" => "LoadBus",
+                "coords" => b.coords,
+                "load" => b.load,
+                "voltage" => b.voltage,
+                "population" => b.population
+            ))
+        elseif isa(b, GenBus)
+            push!(bus_vec, Dict(
+                "type" => "GenBus",
+                "coords" => b.coords,
+                "generation" => b.generation,
+                "voltage" => b.voltage,
+                "tech_type" => b.tech_type,
+                "pfactor" => b.pfactor,
+                "summgen" => b.summgen,
+                "wintgen" => b.wintgen,
+                "gens" => [Dict(
+                    "coords" => g.coords,
+                    "volt" => g.volt,
+                    "tech" => g.tech,
+                    "cap" => g.cap,
+                    "pfactor" => g.pfactor,
+                    "minload" => g.minload,
+                    "scap" => g.scap,
+                    "wcap" => g.wcap,
+                    "shut2loadtime" => g.shut2loadtime,
+                    "status" => g.status
+                ) for g in b.gens]
+            ))
+        else
+            warn("Bus $b is not of a known type. Its type is $(typeof(b))")
+        end
+    end
+    out_dict["buses"] = bus_vec
+    out_dict["trans_lines"] = [Dict(
+        "impedance" => t.impedance,
+        "capacity" => t.capacity,
+        "connecting" => [t.connecting[1].id, t.connecting[2].id]
+    ) for t in trans_lines(grid)]
+    out_dict["substations"] = [Dict(
+        "coords" => s.coords,
+        "voltages" => s.voltages,
+        "load" => s.load,
+        "generation" => s.generation,
+        "population" => s.population,
+        "grouping" => [b.id for b in s.grouping]
+    ) for s in substations(grid)]
+    out_dict["bus_conn"] = adjacency(grid)
+
+    open(outfile, "w") do f
+        JSON.print(f, out_dict)
+    end
+end
+
+"""
+    load_grid(filepath::AbstractString)
+
+Load a synthetic grid from a file previously saved via `save(grid::Grid)`. Due to
+conversions during the dumping and the reading of the file, floats may have some noise
+added. That should be within machine precision, but may affect operations such as `==`.
+"""
+function load_grid(filepath::AbstractString)
+    in_grid = JSON.parsefile(filepath)
+    out_grid = Grid(in_grid["seed"])
+    out_grid.bus_conn = hcat(in_grid["bus_conn"]...)
+    for id in 1:length(in_grid["buses"])
+        if in_grid["buses"][id]["type"] == "LoadBus"
+            push!(
+                out_grid.buses,
+                LoadBus(
+                    id,
+                    LatLon(
+                        in_grid["buses"][id]["coords"]["lat"],
+                        in_grid["buses"][id]["coords"]["lon"]
+                    ),
+                    in_grid["buses"][id]["load"],
+                    in_grid["buses"][id]["voltage"],
+                    in_grid["buses"][id]["population"],
+                )
+            )
+        elseif in_grid["buses"][id]["type"] == "GenBus"
+            push!(
+                out_grid.buses,
+                GenBus(
+                    id,
+                    LatLon(
+                        in_grid["buses"][id]["coords"]["lat"],
+                        in_grid["buses"][id]["coords"]["lon"]
+                    ),
+                    in_grid["buses"][id]["generation"],
+                    in_grid["buses"][id]["voltage"],
+                    in_grid["buses"][id]["tech_type"],
+                    Set(),
+                    Set(),
+                    in_grid["buses"][id]["pfactor"],
+                    in_grid["buses"][id]["summgen"],
+                    in_grid["buses"][id]["wintgen"],
+                    [Generator(
+                        LatLon(g["coords"]["lat"], g["coords"]["lon"]),
+                        g["volt"],
+                        g["tech"],
+                        g["cap"],
+                        g["pfactor"],
+                        g["minload"],
+                        g["scap"],
+                        g["wcap"],
+                        g["shut2loadtime"],
+                        g["status"]
+                    ) for g in in_grid["buses"][id]["gens"]]
+                )
+            )
+        end
+    end
+    connect_buses!(out_grid)
+    for id in 1:length(in_grid["substations"])
+        push!(
+            out_grid.substations,
+            Substation(
+                id,
+                LatLon(
+                    in_grid["substations"][id]["coords"]["lat"],
+                    in_grid["substations"][id]["coords"]["lon"]
+                ),
+                in_grid["substations"][id]["voltages"],
+                in_grid["substations"][id]["load"],
+                in_grid["substations"][id]["generation"],
+                in_grid["substations"][id]["population"],
+                Set(),
+                [out_grid.buses[i] for i in in_grid["substations"][id]["grouping"]]
+            )
+        )
+    end
+    connect_subs!(out_grid)
+    for t in in_grid["trans_lines"]
+        push!(out_grid.trans_lines, TransLine(
+            (out_grid.buses[t["connecting"][1]], out_grid.buses[t["connecting"][2]]),
+            t["impedance"],
+            t["capacity"]
+        ))
+        push!(out_grid.buses[t["connecting"][1]].connections, out_grid.trans_lines[end])
+        push!(out_grid.buses[t["connecting"][2]].connections, out_grid.trans_lines[end])
+    end
+    return out_grid
+end

@@ -1,23 +1,27 @@
 @auto_hash_equals struct TransLine
     connecting::Tuple{Bus,Bus}
-    impedance::Real # Ohms
+    impedance::Real # Ohms # Real because we are only doing DC
     capacity::Real # A
 
-    function TransLine(
-        connecting::Tuple{Bus,Bus};
-        impedfunc=linear_imped,
-        capfunc=volt_cap
-    )
-        return new(
-            connecting,
-            impedfunc(connecting[1], connecting[2]),
-            capfunc(connecting[1], connecting[2])
-        )
+    function TransLine(connecting::Tuple{Bus,Bus}, impedance::Real, capacity::Real)
+        return new(connecting, impedance, capacity)
     end
 end
 
 function TransLine(a::Bus, b::Bus; impedfunc=linear_imped,  capfunc=volt_cap)
     return TransLine((a, b), impedfunc=impedfunc, capfunc=capfunc)
+end
+
+function TransLine(
+    connecting::Tuple{Bus,Bus};
+    impedfunc=linear_imped,
+    capfunc=volt_cap
+)
+    return TransLine(
+        connecting,
+        impedfunc(connecting[1], connecting[2]),
+        capfunc(connecting[1], connecting[2])
+    )
 end
 
 function show(io::IO, tl::TransLine)

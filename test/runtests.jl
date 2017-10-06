@@ -20,6 +20,7 @@ end
     const GENDATAPATH = joinpath(dirname(@__FILE__), "..", "data", "Generator_data.dat")
     const DUMMYPATH = joinpath(dirname(@__FILE__), "..", "data", "dummy.json")
     const DUMMYPPC = joinpath(dirname(@__FILE__), "..", "data", "dummy.p")
+    const GRIDPATH = joinpath(dirname(@__FILE__), "..", "data", "testgrid.json")
 
     grid = Grid(SEED)
     grid1 = Grid(SEED)
@@ -116,8 +117,7 @@ end
                 round(Int, 0.5 * count[2])
             )
         end
-        temp = (grid == grid1)
-        @test temp
+        @test (grid == grid1)
     end
 
     @testset "Input and Output" begin
@@ -134,6 +134,14 @@ end
             dummyjson = JSON.parsefile(DUMMYPATH)
             @test genjson == dummyjson
         end
+
+        @testset "Save and Load Grid" begin
+            save(grid, GRIDPATH)
+            lgrid = load_grid(GRIDPATH)
+            @test adjacency(grid) == adjacency(lgrid)
+            @test sub_connectivity(grid) == sub_connectivity(lgrid)
+        end
+        rm(GRIDPATH)
         rm(DUMMYPATH)
         rm(DUMMYPPC)
     end

@@ -14,7 +14,6 @@ end
 
 using PyCall
 using JSON
-using JLD
 using CSV
 using AutoHashEquals
 using Geodesy
@@ -74,7 +73,9 @@ substations,
 adjacency,
 sub_connectivity,
 end_points,
-impedance
+impedance,
+save,
+load_grid
 
 import Base.==
 import Base.show
