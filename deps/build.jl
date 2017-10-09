@@ -26,6 +26,12 @@ Conda.add("llvmlite==$LLVMLITE_VERSION")  # https://github.com/numba/llvmlite
 Conda.add_channel("invenia")
 Conda.add("pandapower")
 
+# Pin numpy to v1.12.1.
+open(Pkg.dir("Conda", "deps", "usr", "conda-meta", "pinned"), "a") do f
+    println(f, "numpy 1.12.1")
+end
+Conda.update()
+
 info("Verifying pandapower install.")
 python_bin = joinpath(Conda.PYTHONDIR, "python")
 run(`$python_bin -c "import pandapower, pandapower.networks, pandapower.topology, pandapower.converter, pandapower.estimation"`)
