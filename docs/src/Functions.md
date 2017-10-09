@@ -24,6 +24,10 @@ add_substation!
 
 ```@docs
 to_pandapower
+
+save
+
+load_grid
 ```
 
 ## Checking Functions
@@ -43,4 +47,3 @@ robustness_line
 
 robustness_node
 ```
-
