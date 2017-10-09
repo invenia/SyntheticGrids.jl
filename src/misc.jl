@@ -175,31 +175,92 @@ function dijkstra(con_mat::AbstractMatrix{<:Real}, v1)
 end
 
 """
+    floyd_warshall(weights::AbstractMatrix{<:Real})
+
+Compute minimum distances to each node in the network using Floyd-Warshall's algorithm. Here
+we assume that the weigths matrix is symmetric.
+"""
+function floyd_warshall(weights::AbstractMatrix{<:Real})
+    s = size(weights)
+    dist = zeros(Float64, s)
+    for j in 2:s[1]
+        for i in 1:(j - 1)
+            if weights[i, j] > 0
+                dist[i, j] = weights[i, j] # we are assuming that weights is symmetric as it
+                dist[j, i] = weights[i, j] # should be in our case.
+            else
+                dist[i, j] = Inf
+                dist[j, i] = Inf
+            end
+        end
+    end
+
+    for k in 1:s[1]
+        for i in 1:s[1]
+            for j in 1:s[1]
+                if dist[i, j] > dist[i, k] + dist[k, j]
+                    dist[i, j] = dist[i, k] + dist[k, j]
+                end
+            end
+        end
+    end
+    return dist
+end
+
+"""
     mean_shortest_path(conmat::AbstractMatrix{<:Real})
 
 Compute the mean shortest distance between nodes for a network represented by `conmat`.
 The `conmat` matrix should specify the distance between each connected node and be equal to
-zero whenever two nodes are not connected. Distances are computed using Dijkstra's algorithm.
+zero whenever two nodes are not connected. Using the adjacency matrix will return the mean
+shortest path in hops. `conmat` is assumed to be symmetric. Floyd-Warshall's algorithm is
+used to compute the distances.
 """
 function mean_shortest_path(conmat::AbstractMatrix{<:Real})
     n = size(conmat, 1)
-    mdist = [mean(dijkstra(conmat, i)) for i in 1:n]
-    return mean(mdist)
+    return sum(floyd_warshall(conmat))/(n * n)
 end
 
 """
-    mean_shortest_path(conmat::AbstractMatrix{<:Real}, distmat::AbstractMatrix{<:Real})
+    mean_shortest_path(conmat::AbstractMatrix{<:Integer}, distmat::AbstractMatrix{Float64})
 
 Compute the mean shortest distance between nodes for a network with connectivity matrix
 `conmat` and distances between nodes given by `distmat`. Distances are computed using
-Dijkstra's algorithm.
+Floyd-Warshall's algorithm.
 """
 function mean_shortest_path(
-        conmat::AbstractMatrix{<:Real},
-        distmat::AbstractMatrix{<:Real}
+        conmat::AbstractMatrix{<:Integer},
+        distmat::AbstractMatrix{Float64}
     )
     return mean_shortest_path(conmat.*distmat)
 end
+
+# """
+#     mean_shortest_path(conmat::AbstractMatrix{<:Real})
+#
+# Compute the mean shortest distance between nodes for a network represented by `conmat`.
+# The `conmat` matrix should specify the distance between each connected node and be equal to
+# zero whenever two nodes are not connected. Distances are computed using Dijkstra's algorithm.
+# """
+# function mean_shortest_path(conmat::AbstractMatrix{<:Real})
+#     n = size(conmat, 1)
+#     mdist = [mean(dijkstra(conmat, i)) for i in 1:n]
+#     return mean(mdist)
+# end
+
+# """
+#     mean_shortest_path(conmat::AbstractMatrix{<:Real}, distmat::AbstractMatrix{<:Real})
+#
+# Compute the mean shortest distance between nodes for a network with connectivity matrix
+# `conmat` and distances between nodes given by `distmat`. Distances are computed using
+# Dijkstra's algorithm.
+# """
+# function mean_shortest_path(
+#         conmat::AbstractMatrix{<:Real},
+#         distmat::AbstractMatrix{<:Real}
+#     )
+#     return mean_shortest_path(conmat.*distmat)
+# end
 
 """
     robustness_line(con_mat::AbstractMatrix{<:Integer}, n=1000)
