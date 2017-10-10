@@ -11,7 +11,7 @@ count_bus_type(grid::Grid) = (nload(buses(grid)), ngen(buses(grid)))
 # all functions are supposed to work both for buses and for substations,
 # effectively giving us two representations of the network (fine and coarse)
 """
-    laplacian(con_mat::AbstractMatrix)
+    laplacian(con_mat::AbstractMatrix{<:Real})
 
 Return the Laplacian matrix for a graph defined by adjacency matrix `con_mat`.
 """
@@ -29,8 +29,8 @@ function laplacian(conmat::AbstractMatrix{Bool})
     return Symmetric(lap, :L)
 end
 
-function laplacian(con_mat::AbstractMatrix{Int})
-    return laplacian(con_mat .> 0) # treating the substation graph as a simple graph.
+function laplacian(con_mat::AbstractMatrix{T}) where T <: Real
+    return laplacian(con_mat .> zero(T)) # treating the substation graph as a simple graph.
 end
 
 # Shorter code but worse performance.
@@ -53,8 +53,8 @@ end
 Return the total number of links in a system with connectivity matrix `con_mat`. The graph
 will be treated as a simple graph.
 """
-function total_links(con_mat::AbstractMatrix{Int})
-    return total_links(con_mat .> 0) # treating the substation graph as a simple graph.
+function total_links(con_mat::AbstractMatrix{T}) where T <: Real
+    return total_links(con_mat .> zero(T)) # treating the substation graph as a simple graph.
 end
 
 """
