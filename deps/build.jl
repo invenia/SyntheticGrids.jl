@@ -24,13 +24,9 @@ Conda.add_channel("numba")  # channel containing llvmlite
 Conda.add("llvmlite==$LLVMLITE_VERSION")  # https://github.com/numba/llvmlite
 
 Conda.add_channel("invenia")
-Conda.add("pandapower")
-
-# Pin numpy to v1.12.1.
-open(Pkg.dir("Conda", "deps", "usr", "conda-meta", "pinned"), "a") do f
-    println(f, "numpy 1.12.1")
-end
 Conda.update()
+Conda.add("pandapower")
+Conda.add("numpy==1.12.1")
 
 info("Verifying pandapower install.")
 python_bin = joinpath(Conda.PYTHONDIR, "python")
