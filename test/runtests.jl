@@ -141,8 +141,9 @@ end
             @test adjacency(grid) == adjacency(lgrid)
             @test sub_connectivity(grid) == sub_connectivity(lgrid)
         end
-        rm(GRIDPATH)
+
         rm(DUMMYPATH)
         rm(DUMMYPPC)
+        rm(GRIDPATH)
     end
 end
