@@ -140,6 +140,7 @@ end
             lgrid = load_grid(GRIDPATH)
             @test adjacency(grid) == adjacency(lgrid)
             @test sub_connectivity(grid) == sub_connectivity(lgrid)
+            lgrid = 0 # trying to solve issues with Windows locking permissions to GRIDPATH
         end
 
         rm(DUMMYPATH)
