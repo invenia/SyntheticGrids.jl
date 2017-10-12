@@ -425,11 +425,27 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "Functions.html#SyntheticGrids.save",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.save",
+    "category": "Function",
+    "text": "save(grid::Grid, outfile::AbstractString)\n\nSave a grid in a format that can be recovered later. The format adopted is a JSON file with a particular structure.\n\n\n\n"
+},
+
+{
+    "location": "Functions.html#SyntheticGrids.load_grid",
+    "page": "Public Functions",
+    "title": "SyntheticGrids.load_grid",
+    "category": "Function",
+    "text": "load_grid(filepath::AbstractString)\n\nLoad a synthetic grid from a file previously saved via save(grid::Grid). Due to conversions during the dumping and the reading of the file, floats may have some noise added. That should be within machine precision, but may affect operations such as ==.\n\n\n\n"
+},
+
+{
     "location": "Functions.html#Export/Import-Functions-1",
     "page": "Public Functions",
     "title": "Export/Import Functions",
     "category": "section",
-    "text": "to_pandapower"
+    "text": "to_pandapower\n\nsave\n\nload_grid"
 },
 
 {
@@ -437,7 +453,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public Functions",
     "title": "SyntheticGrids.total_links",
     "category": "Function",
-    "text": "total_links(con_mat::AbstractMatrix{<:Real})\n\nReturn the total number of links in a system with connectivity matrix con_mat.\n\n\n\n"
+    "text": "total_links(con_mat::AbstractMatrix{Bool})\n\nReturn the total number of links in a system with connectivity matrix con_mat.\n\n\n\ntotal_links(con_mat::AbstractMatrix{Integer})\n\nReturn the total number of links in a system with connectivity matrix con_mat. The graph will be treated as a simple graph.\n\n\n\n"
 },
 
 {
@@ -445,7 +461,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public Functions",
     "title": "SyntheticGrids.mean_node_deg",
     "category": "Function",
-    "text": "mean_node_deg(con_mat::AbstractMatrix{<:Real})\n\nReturn the average nodal degree of a system with connectivity matrix con_mat.\n\n\n\n"
+    "text": "mean_node_deg(con_mat::AbstractMatrix)\n\nReturn the average nodal degree of a system with connectivity matrix con_mat.\n\n\n\n"
 },
 
 {
@@ -453,7 +469,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public Functions",
     "title": "SyntheticGrids.cluster_coeff",
     "category": "Function",
-    "text": "cluster_coeff(con_mat::AbstractMatrix{<:Real})\n\nReturn the clustering coefficient of a system with connectivity matrix con_mat.\n\n\n\n"
+    "text": "cluster_coeff(con_mat::AbstractMatrix)\n\nReturn the clustering coefficient of a system with connectivity matrix con_mat.\n\n\n\n"
 },
 
 {
@@ -461,7 +477,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public Functions",
     "title": "SyntheticGrids.test_connectivity",
     "category": "Function",
-    "text": "test_connectivity(con_mat::AbstractMatrix{<:Real}, verb=true)\n\nReturn true if the system with connectivity matrix con_matis connected and false otherwise. If verb=true the result will be printed onscreen together with the Fiedler eigenvalue.\n\n\n\n"
+    "text": "test_connectivity(con_mat::AbstractMatrix{<:Integer}, verb=true)\n\nReturn true if the system with connectivity matrix con_matis connected and false otherwise. If verb=true the result will be printed onscreen together with the Fiedler eigenvalue.\n\n\n\n"
 },
 
 {
@@ -469,7 +485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public Functions",
     "title": "SyntheticGrids.mean_shortest_path",
     "category": "Function",
-    "text": "mean_shortest_path(conmat::AbstractMatrix{<:Real})\n\nCompute the mean shortest distance between nodes for a network represented by conmat. The conmat matrix should specify the distance between each connected node and be equal to zero whenever two nodes are not connected. Distances are computed using Dijkstra's algorithm.\n\n\n\nmean_shortest_path(conmat::AbstractMatrix{<:Real}, distmat::AbstractMatrix{<:Real})\n\nCompute the mean shortest distance between nodes for a network with connectivity matrix conmat and distances between nodes given by distmat. Distances are computed using Dijkstra's algorithm.\n\n\n\n"
+    "text": "mean_shortest_path(conmat::AbstractMatrix{<:Real})\n\nCompute the mean shortest distance between nodes for a network represented by conmat. The conmat matrix should specify the distance between each connected node and be equal to zero whenever two nodes are not connected. Using the adjacency matrix will return the mean shortest path in hops. conmat is assumed to be symmetric. Floyd-Warshall's algorithm is used to compute the distances.\n\n\n\nmean_shortest_path(conmat::AbstractMatrix{<:Integer}, distmat::AbstractMatrix{Float64})\n\nCompute the mean shortest distance between nodes for a network with connectivity matrix conmat and distances between nodes given by distmat. Distances are computed using Floyd-Warshall's algorithm.\n\n\n\n"
 },
 
 {
@@ -477,7 +493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public Functions",
     "title": "SyntheticGrids.robustness_line",
     "category": "Function",
-    "text": "robustness_line(con_mat::AbstractMatrix{<:Real}, n=1000)\n\nReturn the average number of transmission lines that have to be randomly removed from a system with connectivity matrix con_mat before it becomes disconnected. Average is computed over n iterations.\n\n\n\n"
+    "text": "robustness_line(con_mat::AbstractMatrix{<:Integer}, n=1000)\n\nReturn the average number of transmission lines that have to be randomly removed from a system with connectivity matrix con_mat before it becomes disconnected. Average is computed over n iterations.\n\n\n\n"
 },
 
 {
@@ -485,7 +501,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public Functions",
     "title": "SyntheticGrids.robustness_node",
     "category": "Function",
-    "text": "robustness_node(con_mat::AbstractMatrix{<:Real}, n=1000)\n\nReturn the average number of nodes that have to be randomly removed from a system with connectivity matrix con_mat before it becomes disconnected. Average is computed over n iterations.\n\n\n\n"
+    "text": "robustness_node(con_mat::AbstractMatrix{<:Integer}, n=1000)\n\nReturn the average number of nodes that have to be randomly removed from a system with connectivity matrix con_mat before it becomes disconnected. Average is computed over n iterations.\n\n\n\n"
 },
 
 {
@@ -625,11 +641,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "Private.html#SyntheticGrids.floyd_warshall",
+    "page": "Private Functions",
+    "title": "SyntheticGrids.floyd_warshall",
+    "category": "Function",
+    "text": "floyd_warshall(weights::AbstractMatrix{<:Real})\n\nCompute minimum distances to each node in the network using Floyd-Warshall's algorithm. Here we assume that the weigths matrix is symmetric.\n\n\n\n"
+},
+
+{
     "location": "Private.html#Graphs-1",
     "page": "Private Functions",
     "title": "Graphs",
     "category": "section",
-    "text": "SyntheticGrids.laplacian\n\nSyntheticGrids.dijkstra"
+    "text": "SyntheticGrids.laplacian\n\nSyntheticGrids.dijkstra\n\nSyntheticGrids.floyd_warshall"
 },
 
 {
