@@ -31,6 +31,8 @@ SyntheticGrids.cluster_gens!
 SyntheticGrids.laplacian
 
 SyntheticGrids.dijkstra
+
+SyntheticGrids.floyd_warshall
 ```
 
 ## Transmission Line properties

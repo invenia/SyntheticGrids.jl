@@ -41,8 +41,8 @@ build_script:
 # Need to convert from shallow to complete for Pkg.clone to work
   - IF EXIST .git\shallow (git fetch --unshallow)
   - C:\projects\julia\bin\julia --inline=no -e "versioninfo();
-      Pkg.clone(pwd(), \"SyntheticGrids\"); Pkg.build(\"SyntheticGrids\"); Pkg.build(\"HDF5\")"
+      Pkg.clone(pwd(), \"SyntheticGrids\"); Pkg.build(\"SyntheticGrids\");
 
 test_script:
-  - C:\projects\julia\bin\julia --inline=no -e "Pkg.test(\"SyntheticGrids\"; coverage=true)" # We need coverage=true because 
+  - C:\projects\julia\bin\julia --inline=no -e "Pkg.test(\"SyntheticGrids\"; coverage=true)" # We need coverage=true because
 # --inline=no does not propagate to Pkg.test() and the coverage part fortuitously solves the inline issue.

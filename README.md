@@ -8,13 +8,13 @@ August - 2017
 [![codecov](https://codecov.io/gh/invenia/SyntheticGrids.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/invenia/SyntheticGrids.jl)
 
 ```
-IMPORTANT: Currently, this package requires Julia to be ran with '--inline=no' due to a known issue: 
+IMPORTANT: Currently, this package requires Julia to be ran with '--inline=no' due to a known issue:
 https://github.com/JuliaLang/julia/issues/22582
 ```
 
 ```
 Note on coverage: Due to CI running the package without the `--inline=no` option, several of the tests
-are not ran when computing coverage, thus resulting in low coverage. In order to execute all test,
+are not ran when computing coverage, thus resulting in low coverage. In order to execute all tests,
 please run `julia --inline=no PATH_TO_THE_PACKAGE/test/runtests.jl`.
 ```
 
