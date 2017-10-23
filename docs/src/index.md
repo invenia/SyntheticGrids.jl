@@ -1,5 +1,4 @@
-# SyntheticGrids v0.1
-August - 2017
+# SyntheticGrids
 
 ```
 IMPORTANT: Currently, this package requires Julia to be ran with '--inline=no' due to a known issue:
