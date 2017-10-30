@@ -6,17 +6,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/k1dv1n6anhdxqb9e/branch/master?svg=true)](https://ci.appveyor.com/project/eperim/syntheticgrids-jl/branch/master)
 [![codecov](https://codecov.io/gh/invenia/SyntheticGrids.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/invenia/SyntheticGrids.jl)
 
-```
-IMPORTANT: Currently, this package requires Julia to be ran with '--inline=no' due to a known issue:
-https://github.com/JuliaLang/julia/issues/22582
-```
-
-```
-Note on coverage: Due to CI running the package without the `--inline=no` option, several of the tests
-are not ran when computing coverage, thus resulting in low coverage. In order to execute all tests,
-please run `julia --inline=no PATH_TO_THE_PACKAGE/test/runtests.jl`.
-```
-
 Power grid research requires testing in realistic, large-scale,  electric  networks.   However,  in  light  of  security threats,  most  information  on  the  actual  power  grids  is considered  sensitive  and  therefore  not  available  to  the general  public.   So  far,  most  power  transmission  studies have been carried using a few publicly available test grids.  Still,  these test grids are too small to capture the  complexity  of  real  grids.   With  this  in  mind,  there has recently been a strong concentrated effort in developing methodologies for building realistic synthetic grids, based only on publicly available information.  These synthetic grids are supposed to be based on some real example  and  to  present  analogous  properties  —  such  as geographic  load/generation  distribution,  total  load  and generator types — while not actually presenting potentially sensitive information about the real grid.
 
 This module provides an open source suite for generating synthetic grids based on real data openly available to the public. Power grids constructed via the SyntheticGrids module can be easily exported to [pandapower](https://pandapower.readthedocs.io/en/v1.2.2/index.html) for running optimum power flow calculations. Currently, information is limited to the USA region, but the framework can be readily applied to any other region, provided there are data sources available. We leverage the works published by Overbye's group and Soltan and Zussman, providing a direct implementation of their methods. For more details on the approaches adopted, please see [Model](Model.md).
