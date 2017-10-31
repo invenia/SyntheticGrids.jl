@@ -2,16 +2,6 @@ using SyntheticGrids
 using Base.Test
 using JSON
 
-inline = false
-if Base.JLOptions().can_inline == 1
-    inline = true
-    warnstring = ```
-        Several tests will not be ran.
-        If you want to run all tests please start Julia with \`--inline=no\`
-        ```
-    warn(warnstring)
-end
-
 @testset "SyntheticGrids" begin
     const SEED = 666
     const GENPATH = joinpath(dirname(@__FILE__), "..", "data", "GenData.json")
@@ -67,56 +57,52 @@ end
         place_gens_from_data!(grid2, simple_func)
         @test length(buses(grid2)) == 9957
 
-        if !inline
-            grid3 = Grid(true)
-            @test size(grid3.bus_conn) == (137, 137)
-            @test size(grid3.sub_conn) == (43, 43)
-            add_gen!(grid3, (11., 11.), 100, [11], ["ki"], reconnect = false)
-            add_load!(grid3, (19.,12.), 100, 100, 100, reconnect = true)
-            add_substation!(
-                grid3,
-                (11., 18.),
-                [11],
-                1000,
-                6000,
-                500,
-                Set(),
-                [grid3.buses[139], grid3.buses[138]]
-            )
-            @test size(grid3.bus_conn) == (139, 139)
-            @test size(grid3.sub_conn) == (44, 44)
-        end
+        grid3 = Grid(true)
+        @test size(grid3.bus_conn) == (137, 137)
+        @test size(grid3.sub_conn) == (43, 43)
+        add_gen!(grid3, (11., 11.), 100, [11], ["ki"], reconnect = false)
+        add_load!(grid3, (19.,12.), 100, 100, 100, reconnect = true)
+        add_substation!(
+            grid3,
+            (11., 18.),
+            [11],
+            1000,
+            6000,
+            500,
+            Set(),
+            [grid3.buses[139], grid3.buses[138]]
+        )
+        @test size(grid3.bus_conn) == (139, 139)
+        @test size(grid3.sub_conn) == (44, 44)
     end
 
     @testset "Clustering grids" begin
-        if !inline
-            count = SyntheticGrids.count_bus_type(grid)
-            cluster!(
-                grid,
-                round(Int, 0.3 * count[1]),
-                round(Int, 0.05 * count[2]),
-                round(Int, 0.5 * count[2])
-            )
-            @test length(substations(grid)) == 47
-            @test grid.substations[1].population == 6193
-            @test grid.substations[47].generation == 16.1
-            @test test_connectivity(grid.sub_conn, false)
-            @test total_links(grid.sub_conn) == 69
-            @test mean_shortest_path(sub_connectivity(grid) .> 0) ≈ 4.107741059302851
-            @test mean_shortest_path(
-                (sub_connectivity(grid) .> 0),
-                distance(substations(grid))
-                ) ≈ 113.21283328057127
-            @test robustness_line(grid.sub_conn, 10) > 1
-            @test robustness_node(grid.sub_conn, 10) > 1
-            count = SyntheticGrids.count_bus_type(grid1)
-            cluster!(
-                grid1,
-                round(Int, 0.3 * count[1]),
-                round(Int, 0.05 * count[2]),
-                round(Int, 0.5 * count[2])
-            )
-        end
+        count = SyntheticGrids.count_bus_type(grid)
+        cluster!(
+            grid,
+            round(Int, 0.3 * count[1]),
+            round(Int, 0.05 * count[2]),
+            round(Int, 0.5 * count[2])
+        )
+        @test length(substations(grid)) == 47
+        @test grid.substations[1].population == 6193
+        @test grid.substations[47].generation == 16.1
+        @test test_connectivity(grid.sub_conn, false)
+        @test total_links(grid.sub_conn) == 69
+        @test mean_shortest_path(sub_connectivity(grid) .> 0) ≈ 4.107741059302851
+        @test mean_shortest_path(
+            (sub_connectivity(grid) .> 0),
+            distance(substations(grid))
+            ) ≈ 113.21283328057127
+        @test robustness_line(grid.sub_conn, 10) > 1
+        @test robustness_node(grid.sub_conn, 10) > 1
+        count = SyntheticGrids.count_bus_type(grid1)
+        cluster!(
+            grid1,
+            round(Int, 0.3 * count[1]),
+            round(Int, 0.05 * count[2]),
+            round(Int, 0.5 * count[2])
+        )
         @test (grid == grid1)
     end
 
