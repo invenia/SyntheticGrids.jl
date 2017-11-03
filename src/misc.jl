@@ -129,12 +129,12 @@ otherwise. If `verb=true` the result will be printed onscreen together with the 
 eigenvalue.
 """
 function test_connectivity(con_mat::AbstractMatrix{<:Integer}, verb=true)
+    const zero_tol = 1e-13 # tolerance for zero due to numerical noise
     lap = laplacian(con_mat)
     evals = eigvals(lap)
-    unique_vals = [v for v in Set(evals)]
-    sort!(unique_vals)
-    if length(unique_vals) > 1 && unique_vals[2] > 0
-        fiedler = unique_vals[2]
+    sort!(evals)
+    if length(evals) > 1 && evals[2] > zero_tol
+        fiedler = evals[2]
         if verb
             println("Fiedler eigenvalue: $fiedler. System is connected.")
         end
