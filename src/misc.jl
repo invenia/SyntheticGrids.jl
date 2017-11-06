@@ -269,7 +269,7 @@ Return the average number of transmission lines that have to be randomly removed
 system with connectivity matrix `con_mat` before it becomes disconnected. Average is
 computed over n iterations.
 """
-function robustness_line(con_mat::AbstractMatrix{<:Integer}, n=1000)
+function robustness_line(con_mat::AbstractMatrix{Bool}, n=1000)
     s = size(con_mat, 1)
     conns = []
     for i in 1:(s - 1), j in (i + 1):s
@@ -278,7 +278,7 @@ function robustness_line(con_mat::AbstractMatrix{<:Integer}, n=1000)
     total = 0
     for rep in 1:n
         connscopy = copy(conns)
-        conmat = con_mat .> 0 # adjusting for the case of substation connectivty matrix
+        conmat = copy(con_mat)
         step = 0
         while test_connectivity(conmat, false)
             k = rand(1:length(connscopy))
@@ -293,6 +293,10 @@ function robustness_line(con_mat::AbstractMatrix{<:Integer}, n=1000)
     return total / n
 end
 
+function robustness_line(con_mat::AbstractMatrix{Int}, n=1000)
+    return robustness_line(con_mat .> 0 , n)
+end
+
 """
     robustness_node(con_mat::AbstractMatrix{<:Integer}, n=1000)
 
@@ -300,24 +304,26 @@ Return the average number of nodes that have to be randomly removed from a syste
 connectivity matrix `con_mat` before it becomes disconnected. Average is computed over n
 iterations.
 """
-function robustness_node(con_mat::AbstractMatrix{<:Integer}, n=1000)
+function robustness_node(con_mat::AbstractMatrix{Bool}, n=1000)
     s = size(con_mat, 1)
     total = 0
     for rep in 1:n
-        nodes = collect(1:s)
-        conmat = con_mat .> 0 # adjusting for the case of substation connectivty matrix
+        len = s
+        conmat = copy(con_mat)
         step = 0
         while test_connectivity(conmat, false)
-            k = rand(1:length(nodes))
-            i = nodes[k]
-            for j in 1:s
-                conmat[i,j] = false
-                conmat[j,i] = false
-            end
-            deleteat!(nodes, k)
+            k = rand(1:len)
+            mask = ones(Bool, len)
+            mask[k] = false
+            conmat = conmat[mask, mask]
             step += 1
+            len -= 1
         end
         total += step
     end
     return total / n
+end
+
+function robustness_node(con_mat::AbstractMatrix{Int}, n=1000)
+    return robustness_node(con_mat .> 0, n)
 end
