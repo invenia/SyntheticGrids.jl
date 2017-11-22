@@ -81,4 +81,4 @@ The connections between buses are built by leveraging the method developed and e
 
 [^7]: Glover, J. Duncan, Mulukutla S. Sarma, and Thomas Overbye. Power System Analysis & Design, SI Version. Cengage Learning, 2012.
 
-[^8]: Soltan, Saleh, and Gil Zussman. "Generation of synthetic spatially embedded power grid networks." Power and Energy Society General Meeting (PESGM), 2016. IEEE, 2016.
+[^8]: Soltan, Saleh, and Gil Zussman. "Generation of synthetic spatially embedded power grid networks." arXiv:1508.04447 [cs.SY], Aug. 2015.

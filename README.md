@@ -14,7 +14,7 @@ REFERENCES:
 - Birchfield, Adam B., et al. "Grid Structural Characteristics as Validation Criteria for Synthetic Networks." IEEE Transactions on Power Systems (2016).
 - Gegner, Kathleen M., et al. "A methodology for the creation of geographically realistic synthetic power flow models." Power and Energy Conference at Illinois (PECI), 2016 IEEE. IEEE, 2016.
 - Birchfield, Adam B., et al. "Statistical considerations in the creation of realistic synthetic power grids for geomagnetic disturbance studies." IEEE Transactions on Power Systems 32.2 (2017): 1502-1510.
-- Soltan, Saleh, and Gil Zussman. "Generation of synthetic spatially embedded power grid networks." Power and Energy Society General Meeting (PESGM), 2016. IEEE, 2016.
+- Soltan, Saleh, and Gil Zussman. "Generation of synthetic spatially embedded power grid networks." arXiv:1508.04447 [cs.SY], Aug. 2015.
 
 ## Detailed documentation
 * [Types](https://invenia.github.io/SyntheticGrids.jl/latest/Types.html)

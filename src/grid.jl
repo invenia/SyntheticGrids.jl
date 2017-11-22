@@ -108,8 +108,7 @@ end
 Execute Tunable Weight Spannning Tree algorithm for the grid using weight 'k'.
 
 REFERENCE: Soltan, Saleh, and Gil Zussman. "Generation of synthetic spatially
-embedded power grid networks." Power and Energy Society General Meeting
-(PESGM), 2016. IEEE, 2016.
+embedded power grid networks." arXiv:1508.04447 [cs.SY], Aug. 2015.
 """
 function twst!(grid::Grid, k)
     node_locations = [b.coords for b in buses(grid)]
@@ -162,8 +161,7 @@ Execute the Reinforcement procedure to increase robustness of a grid.
 * N: number of nearest neighbors in the average distance computation
 
 REFERENCE: Soltan, Saleh, and Gil Zussman. "Generation of synthetic spatially
-embedded power grid networks." Power and Energy Society General Meeting
-(PESGM), 2016. IEEE, 2016.
+embedded power grid networks." arXiv:1508.04447 [cs.SY], Aug. 2015.
 """
 function reinforce!(grid::Grid, m, a, b, g, t, N)
     n = length(buses(grid))
@@ -268,8 +266,7 @@ Connect buses in an electric grid.
 * N: number of nearest neighbors in the average distance computation
 
 REFERENCE: Soltan, Saleh, and Gil Zussman. "Generation of synthetic spatially
-embedded power grid networks." Power and Energy Society General Meeting
-(PESGM), 2016. IEEE, 2016.
+embedded power grid networks." arXiv:1508.04447 [cs.SY], Aug. 2015.
 """
 function connect!(
     grid::Grid;
