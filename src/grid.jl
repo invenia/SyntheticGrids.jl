@@ -19,6 +19,12 @@
     end
 end
 
+buses(g::Grid) = g.buses
+trans_lines(g::Grid) = g.trans_lines
+substations(g::Grid) = g.substations
+adjacency(g::Grid) = g.bus_conn
+sub_connectivity(g::Grid) = g.sub_conn
+
 """
     add_load!(grid::Grid, args...; reconnect = false)
 
@@ -44,7 +50,130 @@ function add_gen!(grid::Grid, args...; reconnect = false)
 end
 
 function add_bus!(grid::Grid, bus::Union{LoadBus, GenBus}; reconnect = false)
-    push!(grid.buses, bus)
+    # The ids are tricky in that they have to correspond to the actual position of the bus
+    # in the vector, but, at the same time, it is convenient to have all buses of the same
+    # type grouped and ordered.
+    loads = [b for b in grid.buses if isa(b, LoadBus)]
+    gens = [b for b in grid.buses if isa(b, GenBus)]
+    load_ids = [b.id for b in loads]
+    gen_ids = [b.id for b in gens]
+    ls = sortperm(load_ids)
+    gs = sortperm(gen_ids)
+    loads = loads[ls]
+    gens = gens[gs]
+    ml_id = isempty(loads) ? 0 : loads[end].id
+    mg_id = isempty(gens) ? 0 : gens[end].id
+    first = mg_id > ml_id ? LoadBus : GenBus
+    second_empty = isempty(loads) || isempty(gens)
+    if !second_empty && isa(bus, first)
+        if first == LoadBus
+            # Add new LoadBus
+            push!(
+                loads,
+                LoadBus(
+                    ml_id + 1,
+                    bus.coords,
+                    bus.load,
+                    bus.voltage,
+                    bus.population,
+                    bus.connected_to,
+                    bus.connections
+                )
+            )
+            # Update IDs of all GenBuses
+            new_gens = GenBus[]
+            for g in gens
+                push!(
+                    new_gens,
+                    GenBus(
+                        g.id + 1,
+                        g.coords,
+                        g.generation,
+                        g.voltage,
+                        g.tech_type,
+                        g.connected_to,
+                        g.connections,
+                        g.pfactor,
+                        g.summgen,
+                        g.wintgen,
+                        g.gens
+                    )
+                )
+            end
+            # Update grid
+            grid.buses = vcat(loads, new_gens)
+        else
+            # Add new GenBus
+            push!(
+                gens,
+                GenBus(
+                    mg_id + 1,
+                    bus.coords,
+                    bus.generation,
+                    bus.voltage,
+                    bus.tech_type,
+                    bus.connected_to,
+                    bus.connections,
+                    bus.pfactor,
+                    bus.summgen,
+                    bus.wintgen,
+                    bus.gens
+                )
+            )
+            # Update the IDs of all LoadBuses
+            new_loads = LoadBus[]
+            for l in loads
+                push!(
+                    new_loads,
+                    LoadBus(
+                        l.id + 1,
+                        l.coords,
+                        l.load,
+                        l.voltage,
+                        l.population,
+                        l.connected_to,
+                        l.connections
+                    )
+                )
+            end
+            # Update grid
+            grid.buses = vcat(gens, new_loads)
+        end
+    elseif bus.id != length(grid.buses) + 1
+        if isa(bus, LoadBus)
+            push!(
+                grid.buses,
+                LoadBus(
+                    length(grid.buses) + 1,
+                    bus.coords,
+                    bus.load,
+                    bus.voltage,
+                    bus.population,
+                    bus.connected_to,
+                    bus.connections
+                )
+            )
+        elseif isa(bus, GenBus)
+            push!(
+                buses(grid),
+                GenBus(
+                    length(grid.buses) + 1,
+                    bus.coords,
+                    bus.generation,
+                    bus.voltage,
+                    bus.tech_type,
+                    bus.connected_to,
+                    bus.connections,
+                    bus.pfactor,
+                    bus.summgen,
+                    bus.wintgen,
+                    bus.gens
+                )
+            )
+        end
+    else
+        push!(grid.buses, bus)
+    end
     if reconnect
         # Break previous connections
         grid.bus_conn = falses(length(grid.buses), length(grid.buses))
@@ -89,12 +218,6 @@ function add_substation!(grid::Grid, args...)
 end
 
 Grid() = Grid(rand(0:round(Int, typemax(Int) / 2)))
-
-buses(g::Grid) = g.buses
-trans_lines(g::Grid) = g.trans_lines
-substations(g::Grid) = g.substations
-adjacency(g::Grid) = g.bus_conn
-sub_connectivity(g::Grid) = g.sub_conn
 
 function mean(v::Vector{LatLon})
     xmean = mean([c.lat for c in v])
@@ -306,32 +429,18 @@ end
 
 function merge!(grid::Grid, sub1::Substation, sub2::Substation)
     if sub1.load > 0 || sub2.load > 0
-        lat = (
-            sub1.population
-            * sub1.coords.lat + sub2.population
-            * sub2.coords.lat) / (sub1.population
-            + sub2.population
-        )
-        lon = (
-            sub1.population
-            * sub1.coords.lon + sub2.population
-            * sub2.coords.lon) / (sub1.population
-            + sub2.population
-        )
+        tot_pop = (sub1.population + sub2.population)
+        lat = (sub1.population * sub1.coords.lat + sub2.population
+            * sub2.coords.lat) / tot_pop
+        lon = (sub1.population * sub1.coords.lon + sub2.population
+            * sub2.coords.lon) / tot_pop
         sub1.coords = LatLon(lat, lon)
     else
-        lat = (
-            sub1.generation
-            * sub1.coords.lat + sub2.generation
-            * sub2.coords.lat) / (sub1.generation
-            + sub2.generation
-        )
-        lon = (
-            sub1.generation
-            * sub1.coords.lon + sub2.generation
-            * sub2.coords.lon) / (sub1.generation
-            + sub2.generation
-        )
+        tot_gen = sub1.generation + sub2.generation
+        lat = (sub1.generation * sub1.coords.lat + sub2.generation
+            * sub2.coords.lat) / tot_gen
+        lon = (sub1.generation * sub1.coords.lon + sub2.generation
+            * sub2.coords.lon) / tot_gen
         sub1.coords = LatLon(lat, lon)
     end
     for v in sub2.voltages
@@ -344,6 +453,36 @@ function merge!(grid::Grid, sub1::Substation, sub2::Substation)
     sub1.population += sub2.population
     sub1.grouping = vcat(sub1.grouping, sub2.grouping)
     deleteat!(substations(grid), findfirst(substations(grid), sub2))
+end
+
+function merge!(grid::Grid, i1::Int, i2::Int)
+    sub1 = substations(grid)[i1]
+    sub2 = substations(grid)[i2]
+    if sub1.load > 0 || sub2.load > 0
+        tot_pop = (sub1.population + sub2.population)
+        lat = (sub1.population * sub1.coords.lat + sub2.population
+            * sub2.coords.lat) / tot_pop
+        lon = (sub1.population * sub1.coords.lon + sub2.population
+            * sub2.coords.lon) / tot_pop
+        sub1.coords = LatLon(lat, lon)
+    else
+        tot_gen = sub1.generation + sub2.generation
+        lat = (sub1.generation * sub1.coords.lat + sub2.generation
+            * sub2.coords.lat) / tot_gen
+        lon = (sub1.generation * sub1.coords.lon + sub2.generation
+            * sub2.coords.lon) / tot_gen
+        sub1.coords = LatLon(lat, lon)
+    end
+    for v in sub2.voltages
+        if !(v in sub1.voltages)
+            push!(sub1.voltages, v)
+        end
+    end
+    sub1.load += sub2.load
+    sub1.generation += sub2.generation
+    sub1.population += sub2.population
+    sub1.grouping = vcat(sub1.grouping, sub2.grouping)
+    deleteat!(substations(grid), i2)
 end
 
 """

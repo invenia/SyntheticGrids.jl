@@ -20,12 +20,25 @@ function cluster_loads!(grid::Grid, nload)
         )
         substations(grid)[end].grouping = [b]
     end
+    # Now let's avoid computing some things several times
     load_dist = distance(loads)
+    all_ids = [l.id for l in loads]
+    id2ind = Dict{Int, Int}()
+    for id in all_ids
+        id2ind[id] = findfirst(all_ids, id)
+    end
+    m = length(loads)
+    sum_pops = fill(0, (m, m))
+    for s1 in 1:(m - 1), s2 in (s1 + 1):m
+        sum_pops[s2, s1] = loads[s1].population + loads[s2].population
+    end
+    sum_pops = Symmetric(sum_pops, :L)
+    sub_dist = Matrix(load_sub_dist(substations(grid), load_dist, id2ind, sum_pops))
+    const POPLIMIT = 200000 # population limit for a substation (=> 400MW load)
+
     while length(substations(grid)) > nload
-        sub_dist = load_sub_dist(substations(grid), loads, load_dist)
         n = length(substations(grid))
         ok = false
-        const POPLIMIT = 200000 # population limit for a substation (=> 400MW load)
         i = j = -1
         while true
             m = indmin(sub_dist)
@@ -46,7 +59,14 @@ function cluster_loads!(grid::Grid, nload)
         if nload == Inf
             break
         end
-        merge!(grid, substations(grid)[i], substations(grid)[j])
+        merge!(grid, i, j)
+        # Update substation distances
+        mask = fill(true, (n, n))
+        mask[j, :] = false # Eliminate rows and columns corresponding to the
+        mask[:, j] = false # deleted substation
+        sub_dist = reshape(sub_dist[mask], (n - 1, n - 1)) # Remove old dists
+        i = i > j ? i - 1 : i # Update i to the new length
+        update_sub_dist!(sub_dist, i, substations(grid), load_dist, id2ind, sum_pops)
     end
 end
 
@@ -118,13 +138,20 @@ function cluster_gens!(grid::Grid, ngen)
         push!(substations(grid), substation)
         g_subs[i] = substation
     end
+    dists = distance(g_subs)
     while length(g_subs) > ngen
-        dists = distance(g_subs)
         m = indmin(dists)
         n = length(g_subs)
         ii, jj = ind2sub(size(dists), m)
-        merge!(grid, substations(grid)[ii + st], substations(grid)[jj + st])
+        merge!(grid, ii + st, jj + st)
         deleteat!(g_subs, jj)
+        # Update substation distances
+        mask = fill(true, (n, n))
+        mask[jj, :] = false # Eliminate rows and columns corresponding to the
+        mask[:, jj] = false # deleted substation
+        dists = reshape(dists[mask], (n - 1, n - 1)) # Remove old dists
+        ii = ii > jj ? ii - 1 : ii # Update i to the new length
+        update_distance!(dists, g_subs, ii)
     end
 end
 
