@@ -429,32 +429,18 @@ end
 
 function merge!(grid::Grid, sub1::Substation, sub2::Substation)
     if sub1.load > 0 || sub2.load > 0
-        lat = (
-            sub1.population
-            * sub1.coords.lat + sub2.population
-            * sub2.coords.lat) / (sub1.population
-            + sub2.population
-        )
-        lon = (
-            sub1.population
-            * sub1.coords.lon + sub2.population
-            * sub2.coords.lon) / (sub1.population
-            + sub2.population
-        )
+        tot_pop = (sub1.population + sub2.population)
+        lat = (sub1.population * sub1.coords.lat + sub2.population
+            * sub2.coords.lat) / tot_pop
+        lon = (sub1.population * sub1.coords.lon + sub2.population
+            * sub2.coords.lon) / tot_pop
         sub1.coords = LatLon(lat, lon)
     else
-        lat = (
-            sub1.generation
-            * sub1.coords.lat + sub2.generation
-            * sub2.coords.lat) / (sub1.generation
-            + sub2.generation
-        )
-        lon = (
-            sub1.generation
-            * sub1.coords.lon + sub2.generation
-            * sub2.coords.lon) / (sub1.generation
-            + sub2.generation
-        )
+        tot_gen = sub1.generation + sub2.generation
+        lat = (sub1.generation * sub1.coords.lat + sub2.generation
+            * sub2.coords.lat) / tot_gen
+        lon = (sub1.generation * sub1.coords.lon + sub2.generation
+            * sub2.coords.lon) / tot_gen
         sub1.coords = LatLon(lat, lon)
     end
     for v in sub2.voltages
@@ -467,6 +453,36 @@ function merge!(grid::Grid, sub1::Substation, sub2::Substation)
     sub1.population += sub2.population
     sub1.grouping = vcat(sub1.grouping, sub2.grouping)
     deleteat!(substations(grid), findfirst(substations(grid), sub2))
+end
+
+function merge!(grid::Grid, i1::Int, i2::Int)
+    sub1 = substations(grid)[i1]
+    sub2 = substations(grid)[i2]
+    if sub1.load > 0 || sub2.load > 0
+        tot_pop = (sub1.population + sub2.population)
+        lat = (sub1.population * sub1.coords.lat + sub2.population
+            * sub2.coords.lat) / tot_pop
+        lon = (sub1.population * sub1.coords.lon + sub2.population
+            * sub2.coords.lon) / tot_pop
+        sub1.coords = LatLon(lat, lon)
+    else
+        tot_gen = sub1.generation + sub2.generation
+        lat = (sub1.generation * sub1.coords.lat + sub2.generation
+            * sub2.coords.lat) / tot_gen
+        lon = (sub1.generation * sub1.coords.lon + sub2.generation
+            * sub2.coords.lon) / tot_gen
+        sub1.coords = LatLon(lat, lon)
+    end
+    for v in sub2.voltages
+        if !(v in sub1.voltages)
+            push!(sub1.voltages, v)
+        end
+    end
+    sub1.load += sub2.load
+    sub1.generation += sub2.generation
+    sub1.population += sub2.population
+    sub1.grouping = vcat(sub1.grouping, sub2.grouping)
+    deleteat!(substations(grid), i2)
 end
 
 """

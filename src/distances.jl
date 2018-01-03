@@ -54,22 +54,30 @@ IEEE Transactions on Power Systems (2016).
 function subs_dist{T <: Real}(
     inds1::Vector{Int},
     inds2::Vector{Int},
-    buses::Vector{LoadBus},
     b_dist::Matrix{T},
+    id2ind::Dict{Int, Int},
+    sum_pops::Symmetric{Int}
 )
     dist = 0
     totw = 0
-    for i1 in inds1, i2 in inds2
-        totw += (buses[i1].population + buses[i2].population)
+    for i1 in inds1
+        j1 = id2ind[i1]
+        for i2 in inds2
+            j2 = id2ind[i2]
+            dist += sum_pops[j2, j1] * b_dist[j2, j1]
+            totw += sum_pops[j2, j1]
+        end
     end
-    for i1 in inds1, i2 in inds2
-        dist += ((buses[i1].population + buses[i2].population)
-                * b_dist[i2,i1] / totw)
-    end
-    return dist
+    return dist/totw
 end
 
-function load_sub_dist(subs, buses, b_dist)
+
+function load_sub_dist(
+    subs::Vector{Substation},
+    b_dist::Matrix{Float64},
+    id2ind::Dict{Int, Int},
+    sum_pops::Symmetric{Int}
+)
     b_inds = sizehint!([], length(subs)) # indexes of buses in each substations
     for sub in subs
         temp = sizehint!(Int[],length(sub.grouping))
@@ -78,13 +86,40 @@ function load_sub_dist(subs, buses, b_dist)
         end
         push!(b_inds, temp)
     end
+
     n = length(subs)
     dist_mat = fill(Inf, (n, n))
-    for s1 in 1:(n - 1), s2 in (s1 + 1):n
-        dist_mat[s1, s2] = subs_dist(b_inds[s1], b_inds[s2], buses, b_dist)
-        dist_mat[s2, s1] = dist_mat[s1, s2]
+    for s1 in 1:(n - 1)
+        for s2 in (s1 + 1):n
+            dist_mat[s2, s1] = subs_dist(b_inds[s1], b_inds[s2], b_dist, id2ind, sum_pops)
+        end
     end
-    return dist_mat
+    return Symmetric(dist_mat, :L)
+end
+
+function update_sub_dist!(
+    dist_mat::Matrix{Float64},
+    i::Int,
+    subs::Vector{Substation},
+    b_dist::Matrix{Float64},
+    id2ind::Dict{Int, Int},
+    sum_pops::Symmetric{Int}
+)
+    b_inds = sizehint!([], length(subs)) # indexes of buses in each substations
+    for sub in subs
+        temp = sizehint!(Int[],length(sub.grouping))
+        for load in sub.grouping
+          push!(temp,load.id)
+        end
+        push!(b_inds, temp)
+    end
+
+    n = length(subs)
+    ran = [c for c in collect(1:n) if c != i]
+    for s2 in ran
+        dist_mat[s2, i] = subs_dist(b_inds[i], b_inds[s2], b_dist, id2ind, sum_pops)
+        dist_mat[i, s2] = dist_mat[s2, i]
+    end
 end
 
 function distance{T<:Bus}(buses::Vector{T})
@@ -93,6 +128,16 @@ function distance{T<:Bus}(buses::Vector{T})
     for b1 in 1:(n - 1), b2 in (b1 + 1):n
         dist_mat[b1, b2] = haversine(buses[b1], buses[b2])
         dist_mat[b2, b1] = dist_mat[b1, b2]
+    end
+    return dist_mat
+end
+
+function update_distance!{T<:Bus}(dist_mat::Matrix{Float64}, buses::Vector{T}, i::Int)
+    n = length(buses)
+    ran = [c for c in collect(1:n) if c != i]
+    for b in ran
+        dist_mat[b, i] = haversine(buses[b], buses[i])
+        dist_mat[i, b] = dist_mat[b, i]
     end
     return dist_mat
 end
