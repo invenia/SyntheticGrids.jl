@@ -7,12 +7,7 @@ function zipcode_builder(datapath = CENSUSPATH)
     df = CSV.read(datapath, delim='\t')
     zipcodes = Vector(size(df, 1))
     for i in 1:size(df, 1)
-        zip = [
-            get(df[i, 1]),
-            get(df[i, 2]),
-            get(df[i, 8]),
-            parse(Float64, get(df[i, 9]))
-        ]
+        zip = [df[i, 1], df[i, 2], df[i, 8], df[i, 9]]
         zipcodes[i] = zip
     end
     return zipcodes
@@ -129,15 +124,15 @@ function place_loads_from_zips!(
 end
 
 function get_plant_data(coordpath = GENCOORDPATH)
-    df = CSV.read(coordpath)
+    df = CSV.read(coordpath, rows_for_type_detect=typemax(Int))
     pcodes = sizehint!(Int[], size(df, 1))
     pcoords = sizehint!([], size(df, 1))
     pvolts = sizehint!([], size(df, 1))
     for i in 1:size(df, 1)
-        push!(pcodes, get(df[i, Symbol("Plant Code")]))
+        push!(pcodes, df[i, Symbol("Plant Code")])
         push!(
             pcoords,
-            (get(df[i, Symbol("Latitude")]), get(df[i, Symbol("Longitude")]))
+            (df[i, Symbol("Latitude")], df[i, Symbol("Longitude")])
         )
         vs = Real[]
         for s in [
@@ -145,15 +140,14 @@ function get_plant_data(coordpath = GENCOORDPATH)
             Symbol("Grid Voltage 2 (kV)"),
             Symbol("Grid Voltage 3 (kV)")
         ]
-            if get(df[i, s]) != " "
-                push!(vs, parse(Float64, get(df[i, s])))
+            if !ismissing(df[i, s])
+                push!(vs, df[i, s])
             end
         end
         push!(pvolts, vs)
     end
     return pcodes, pcoords, pvolts
 end
-
 
 function get_gen_data(
     datapath = GENDATAPATH,
@@ -176,26 +170,15 @@ function get_gen_data(
         "Time from Cold Shutdown to Full Load",
         "Status"
     ]
-    col_types = [
-        Int,
-        AbstractString,
-        AbstractString,
-        AbstractString,
-        AbstractString,
-        AbstractString,
-        AbstractString,
-        AbstractString,
-        AbstractString,
-    ]
-    df = CSV.read(datapath, types=Dict(zip(keys2keep, col_types)))
+    df = CSV.read(datapath, rows_for_type_detect=typemax(Int))
     tempdata = sizehint!([], size(df, 1))
     for i in 1:size(df, 1)
         gdata = []
         for k in keys2keep[2:end]
-            push!(gdata, get(df[i, Symbol(k)], " "))
+            push!(gdata, df[i, Symbol(k)])
         end
         for j in 1:length(pcodes)
-            if pcodes[j] == get(df[i, Symbol(keys2keep[1])])
+            if pcodes[j] == df[i, Symbol(keys2keep[1])]
                 gdata = vcat([pcoords[j], pvolts[j]], gdata)
                 break
             end
@@ -212,11 +195,13 @@ function get_gen_data(
 end
 
 function format_gen!(gen::Dict)
-    gen["cap"] = parse(Float64, gen["cap"])
-    gen["pfactor"] = length(gen["pfactor"])>1 ? parse(Float64, gen["pfactor"]) : 1
-    gen["minload"] = length(gen["minload"])>1 ? parse(Float64, gen["minload"]) : 0
-    gen["scap"] = length(gen["scap"])>1 ? parse(Float64, gen["scap"]) : gen["cap"]
-    gen["wcap"] = length(gen["wcap"])>1 ? parse(Float64, gen["wcap"]) : gen["cap"]
+    gen["cap"] = gen["cap"]
+    gen["pfactor"] = !ismissing(gen["pfactor"]) ? gen["pfactor"] : 1
+    gen["minload"] = !ismissing(gen["minload"]) ? gen["minload"] : 0
+    gen["scap"] = !ismissing(gen["scap"]) ? gen["scap"] : gen["cap"]
+    gen["wcap"] = !ismissing(gen["wcap"]) ? gen["wcap"] : gen["cap"]
+    gen["shut2loadtime"] = !ismissing(gen["shut2loadtime"]) ? gen["shut2loadtime"] : " "
+    gen["status"] = !ismissing(gen["status"]) ? gen["status"] : " "
 end
 
 """
@@ -243,17 +228,20 @@ function prepare_gen_data(
             format_gen!(g)
         end
     end
+
     open(outfile, "w") do f
         JSON.print(f, fplants)
     end
 end
 
 function format_gen!(gen::Generator)
-    gen.cap = parse(Float64, gen.cap)
-    gen.pfactor = length(gen.pfactor) > 1 ? parse(Float64, gen.pfactor) : 1
-    gen.minload = length(gen.minload) > 1 ? parse(Float64, gen.minload) : 0
-    gen.scap = length(gen.scap) > 1 ? parse(Float64, gen.scap) : gen.cap
-    gen.wcap = length(gen.wcap) > 1 ? parse(Float64, gen.wcap) : gen.cap
+    gen.cap = gen.cap
+    gen.pfactor = !ismissing(gen.pfactor) ? gen.pfactor : 1
+    gen.minload = !ismissing(gen.minload) ? gen.minload : 0
+    gen.scap = !ismissing(gen.scap) ? gen.scap : gen.cap
+    gen.wcap = !ismissing(gen.wcap) ? gen.wcap : gen.cap
+    gen.shut2loadtime = !ismissing(gen.shut2loadtime) ? gen.shut2loadtime : " "
+    gen.status = !ismissing(gen.status) ? gen.status : " "
 end
 
 function pfacwavg(plant::AbstractArray{Generator})
@@ -586,7 +574,7 @@ function to_pandapower(grid::Grid,)
 end
 
 """
-    to_pandapower(grid::Grid, filename::AbstractString)
+    to_pandapower(grid::Grid, filename::AbstractString)D
 
 Export a 'grid' to pandapower format and saves it as 'filename'. Pandapower requires
 'filename' to be a '.p' file.
