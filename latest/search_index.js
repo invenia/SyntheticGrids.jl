@@ -13,7 +13,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "SyntheticGrids",
     "category": "section",
-    "text": "Power grid research requires testing in realistic, large-scale,  electric  networks.   However,  in  light  of  security threats,  most  information  on  the  actual  power  grids  is considered  sensitive  and  therefore  not  available  to  the general  public.   So  far,  most  power  transmission  studies have been carried using a few publicly available test grids.  Still,  these test grids are too small to capture the  complexity  of  real  grids.   With  this  in  mind,  there has recently been a strong concentrated effort in developing methodologies for building realistic synthetic grids, based only on publicly available information.  These synthetic grids are supposed to be based on some real example  and  to  present  analogous  properties  —  such  as geographic  load/generation  distribution,  total  load  and generator types — while not actually presenting potentially sensitive information about the real grid.This module provides an open source suite for generating synthetic grids based on real data openly available to the public. Power grids constructed via the SyntheticGrids module can be easily exported to pandapower for running optimum power flow calculations. Currently, information is limited to the USA region, but the framework can be readily applied to any other region, provided there are data sources available. We leverage the works published by Overbye's group and Soltan and Zussman, providing a direct implementation of their methods. For more details on the approaches adopted, please see Model.REFERENCES:Birchfield, Adam B., et al. \"Grid Structural Characteristics as Validation Criteria for Synthetic Networks.\" IEEE Transactions on Power Systems (2016).\nGegner, Kathleen M., et al. \"A methodology for the creation of geographically realistic synthetic power flow models.\" Power and Energy Conference at Illinois (PECI), 2016 IEEE. IEEE, 2016.\nBirchfield, Adam B., et al. \"Statistical considerations in the creation of realistic synthetic power grids for geomagnetic disturbance studies.\" IEEE Transactions on Power Systems 32.2 (2017): 1502-1510.\nSoltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" arXiv:1508.04447 [cs.SY], Aug. 2015."
+    "text": "Power grid research requires testing in realistic, large-scale,  electric  networks.   However,  in  light  of  security threats,  most  information  on  the  actual  power  grids  is considered  sensitive  and  therefore  not  available  to  the general  public.   So  far,  most  power  transmission  studies have been carried using a few publicly available test grids.  Still,  these test grids are too small to capture the  complexity  of  real  grids.   With  this  in  mind,  there has recently been a strong concentrated effort in developing methodologies for building realistic synthetic grids, based only on publicly available information.  These synthetic grids are supposed to be based on some real example  and  to  present  analogous  properties  —  such  as geographic  load/generation  distribution,  total  load  and generator types — while not actually presenting potentially sensitive information about the real grid.This module provides an open source suite for generating synthetic grids based on real data openly available to the public. Power grids constructed via the SyntheticGrids module can be easily exported to pandapower for running optimum power flow calculations. Currently, information is limited to the USA region, but the framework can be readily applied to any other region, provided there are data sources available. We leverage the works published by Overbye\'s group and Soltan and Zussman, providing a direct implementation of their methods. For more details on the approaches adopted, please see Model.REFERENCES:Birchfield, Adam B., et al. \"Grid Structural Characteristics as Validation Criteria for Synthetic Networks.\" IEEE Transactions on Power Systems (2016).\nGegner, Kathleen M., et al. \"A methodology for the creation of geographically realistic synthetic power flow models.\" Power and Energy Conference at Illinois (PECI), 2016 IEEE. IEEE, 2016.\nBirchfield, Adam B., et al. \"Statistical considerations in the creation of realistic synthetic power grids for geomagnetic disturbance studies.\" IEEE Transactions on Power Systems 32.2 (2017): 1502-1510.\nSoltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" arXiv:1508.04447 [cs.SY], Aug. 2015."
 },
 
 {
@@ -269,7 +269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Model",
     "title": "Bus",
     "category": "section",
-    "text": "Bus is an abstract type that acts as parent to the LoadBus, GenBus and Substation types. Pragmatically, the one common feature to all of these is their geographical location being specified by latitude and longitude values. This is a better choice than adopting cartesian coordinates, as that would require some kind of projection scheme, such as the Mercator or the UTM one. The issue with adopting a projection scheme is that none of the available ones are adequate for being applied over very large areas, such as the territory span of the USA. Therefore, coordinates are kept in a latitude-longitude format and, whenever we need to compute real distances, we adopt the haversine formula [1] with a radius of 6369.783km, which corresponds to Earth's radius at latitude 38.8 (the center of the region we model).Bus siting and sizing is done according to the approach presented in reference [2]."
+    "text": "Bus is an abstract type that acts as parent to the LoadBus, GenBus and Substation types. Pragmatically, the one common feature to all of these is their geographical location being specified by latitude and longitude values. This is a better choice than adopting cartesian coordinates, as that would require some kind of projection scheme, such as the Mercator or the UTM one. The issue with adopting a projection scheme is that none of the available ones are adequate for being applied over very large areas, such as the territory span of the USA. Therefore, coordinates are kept in a latitude-longitude format and, whenever we need to compute real distances, we adopt the haversine formula [1] with a radius of 6369.783km, which corresponds to Earth\'s radius at latitude 38.8 (the center of the region we model).Bus siting and sizing is done according to the approach presented in reference [2]."
 },
 
 {
@@ -293,7 +293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Model",
     "title": "Generators",
     "category": "section",
-    "text": "All data on generators is directly extracted from the power plant survey [4], which provides us with:Geographical location: every generator is directly associated with a power plant. Thus, we adopt the power plant's latitude and longitude as the generator's location.\nOperating voltages: although a given generator probably has a single operating voltage, this information is given to us on a plant-basis, not on a generator-basis. Therefore, each generator will be attributed the whole set of voltages from the parent plant.\nTechnology type: directly obtained from survey data. Generators with different technology may be located at the same plant.\nGeneration capacity: directly obtained from survey data.\nPower factor: directly obtained from survey data. In case it is not given, we assume it equals 1.0.\nMinimum load: directly obtained from survey data. In case it is not given, we assume it equals 0.0.\nSummer and Winter generation capacity: directly obtained from survey data. In case it is not given, we assume it equals the nominal generation capacity.\nTime from cold shutdown to full load: currently we grab it without even parsing, but it is kept due to probably being useful in the future. Several generators do not offer this information.\nStatus: Informs us if the generator was operational, on standby or out of service for most of the survey year."
+    "text": "All data on generators is directly extracted from the power plant survey [4], which provides us with:Geographical location: every generator is directly associated with a power plant. Thus, we adopt the power plant\'s latitude and longitude as the generator\'s location.\nOperating voltages: although a given generator probably has a single operating voltage, this information is given to us on a plant-basis, not on a generator-basis. Therefore, each generator will be attributed the whole set of voltages from the parent plant.\nTechnology type: directly obtained from survey data. Generators with different technology may be located at the same plant.\nGeneration capacity: directly obtained from survey data.\nPower factor: directly obtained from survey data. In case it is not given, we assume it equals 1.0.\nMinimum load: directly obtained from survey data. In case it is not given, we assume it equals 0.0.\nSummer and Winter generation capacity: directly obtained from survey data. In case it is not given, we assume it equals the nominal generation capacity.\nTime from cold shutdown to full load: currently we grab it without even parsing, but it is kept due to probably being useful in the future. Several generators do not offer this information.\nStatus: Informs us if the generator was operational, on standby or out of service for most of the survey year."
 },
 
 {
@@ -348,7 +348,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.place_loads_from_zips!",
     "page": "Public Functions",
     "title": "SyntheticGrids.place_loads_from_zips!",
-    "category": "Function",
+    "category": "function",
     "text": "place_loads_from_zips!(\n    grid::Grid;\n    latlim = (-Inf,Inf),\n    longlim = (-Inf,Inf),\n    datapath = CENSUSPATH,\n    loadfunc = linearload,\n    voltfunc = randvolt\n)\n\nCreate load buses based on zipcode information.\n\nArguments\n\ngrid: The synthetic grid instance that will be altered.\nlatlim: Tuple of the form (minimum latitude, maximum latitude).\nlonglim: Tuple of the form (minimum longitude, maximum longitude).\ndatapath: Path to the text file containing census information.\nloadfunc: Function for computing bus load based on some rule.\nvoltfunc: Function for computing bus voltage based on some rule.\n\nREFERENCE: https://www.census.gov/geo/maps-data/data/gazetteer2010.html\n\n\n\nplace_loads_from_zips!(\n    grid::Grid,\n    geolim::Function;\n    datapath = CENSUSPATH,\n    loadfunc = linearload,\n    voltfunc = randvolt\n)\n\nCreate load buses based on zipcode information.\n\nArguments\n\ngrid: The synthetic grid instance that will be altered.\ngeolim: Function that receives a latitude-longitude pair and returns true or false.\n\nSpecifies the region of interest.\n\ndatapath: Path to the text file containing census information.\nloadfunc: Function for computing bus load based on some rule.\nvoltfunc: Function for computing bus voltage based on some rule.\n\nREFERENCE: https://www.census.gov/geo/maps-data/data/gazetteer2010.html\n\n\n\n"
 },
 
@@ -356,7 +356,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.place_gens_from_data!",
     "page": "Public Functions",
     "title": "SyntheticGrids.place_gens_from_data!",
-    "category": "Function",
+    "category": "function",
     "text": "place_gens_from_data!(\n    grid::Grid,\n    plants::Array,\n    pfactorfunc::Function = pfacwavg\n)\n\nCreate generation buses based on power plant data.\n\nArguments:\n\ngrid: Grid instance which will be populated.\nplants: Power plant information already parsed.\npfactorfunc: Function for computing bus power factor based on some rule.\n\n\n\nplace_gens_from_data!(\n    grid::Grid;\n    latlim::Tuple = (-Inf, Inf),\n    longlim::Tuple = (-Inf, Inf),\n    jsonpath = GENJSONPATH,\n    pfactorfunc::Function = pfacwavg,\n)\n\nCreate generation buses based on power plant data.\n\nArguments:\n\ngrid: Grid instance which will be populated.\nlatlim: Tuple of the form (minimum latitude, maximum latitude).\nlonglim: Tuple of the form (minimum longitude, maximum longitude).\njsonpath: Path to the JSON file with the generator data.\npfactorfunc: Function for computing bus power factor based on some rule.\n\nREFERENCE: https://www.eia.gov/electricity/data/eia860/index.html\n\n\n\nplace_gens_from_data!(\n    grid::Grid,\n    geolim::Function;\n    jsonpath = GENJSONPATH,\n    pfactorfunc::Function = pfacwavg,\n)\n\nCreate generation buses based on power plant data.\n\nArguments:\n\ngrid: Grid instance which will be populated.\ngeolim: Function that receives a latitude-longitude pair and returns true or false.\n\nSpecifies the region of interest.\n\njsonpath: Path to the JSON file with the generator data.\npfactorfunc: Function for computing bus power factor based on some rule.\n\nREFERENCE: https://www.eia.gov/electricity/data/eia860/index.html\n\n\n\n"
 },
 
@@ -364,7 +364,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.connect!",
     "page": "Public Functions",
     "title": "SyntheticGrids.connect!",
-    "category": "Function",
+    "category": "function",
     "text": "connect!(grid::Grid; k=2.5, m=-1, a=1, b=3.2, g=2.5, t=2, N=10)\n\nConnect buses in an electric grid.\n\nArguments:\n\nk: weight of the spanning tree (see REFERENCE)\nm: total number of connections (computed from the # of nodes if default)\na, b, g, t: paramaters of the model (see REFERENCE)\nN: number of nearest neighbors in the average distance computation\n\nREFERENCE: Soltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" arXiv:1508.04447 [cs.SY], Aug. 2015.\n\n\n\n"
 },
 
@@ -372,15 +372,15 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.cluster!",
     "page": "Public Functions",
     "title": "SyntheticGrids.cluster!",
-    "category": "Function",
-    "text": "cluster!(grid::Grid, nloads, nboth, ngens)\n\nCluster all nodes of a grid into 'nloads' load substations, 'ngens' generation substations and 'nboth' substations with both load and generation.\n\nREFERENCE: Birchfield, Adam B., et al. \"Grid Structural Characteristics as Validation Criteria for Synthetic Networks.\" IEEE Transactions on Power Systems (2016).\n\n\n\n"
+    "category": "function",
+    "text": "cluster!(grid::Grid, nloads, nboth, ngens)\n\nCluster all nodes of a grid into \'nloads\' load substations, \'ngens\' generation substations and \'nboth\' substations with both load and generation.\n\nREFERENCE: Birchfield, Adam B., et al. \"Grid Structural Characteristics as Validation Criteria for Synthetic Networks.\" IEEE Transactions on Power Systems (2016).\n\n\n\n"
 },
 
 {
     "location": "Functions.html#SyntheticGrids.create_lines!",
     "page": "Public Functions",
     "title": "SyntheticGrids.create_lines!",
-    "category": "Function",
+    "category": "function",
     "text": "create_lines!(grid::Grid; impedfunc = linear_imped, capfunc = volt_cap)\n\nCreate transmission lines for a synthetic grid. Line impedancies are determined by impedfunc and line capacities are calculated via capfunc. This function will only work after the grid has been connected through the connect!() function.\n\n\n\n"
 },
 
@@ -388,7 +388,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.add_load!",
     "page": "Public Functions",
     "title": "SyntheticGrids.add_load!",
-    "category": "Function",
+    "category": "function",
     "text": "add_load!(grid::Grid, args...; reconnect = false)\n\nAdd LoadBus to grid by calling the LoadBus(coords, load, volt, pop, connected_to = Set(), connections = Set()) method with args... as arguments. If reconnect = true, all connections will be remade.\n\n\n\n"
 },
 
@@ -396,7 +396,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.add_gen!",
     "page": "Public Functions",
     "title": "SyntheticGrids.add_gen!",
-    "category": "Function",
+    "category": "function",
     "text": "add_gen!(grid::Grid, args...; reconnect = false)\n\nAdd Genbus to grid by calling the GenBus(coords, gen, volt, tech, connected_to = Set(), connections = Set(), pfactor = -1, summgen = -1, wintgen = -1, gens = []) method with args... as arguments. If reconnect = true, all connections will be remade.\n\n\n\n"
 },
 
@@ -404,7 +404,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.add_substation!",
     "page": "Public Functions",
     "title": "SyntheticGrids.add_substation!",
-    "category": "Function",
+    "category": "function",
     "text": "add_substation!(grid::Grid, args...; reconnect = false)\n\nAdd Substation to grid by calling the Substation(coords, volts, load, gen, pop, con = Set(), group = []) method with args... as arguments.\n\n\n\n"
 },
 
@@ -420,15 +420,15 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.to_pandapower",
     "page": "Public Functions",
     "title": "SyntheticGrids.to_pandapower",
-    "category": "Function",
-    "text": "to_pandapower(grid::Grid)\n\nExport a 'grid' to pandapower format.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\nto_pandapower(grid::Grid, filename::AbstractString)D\n\nExport a 'grid' to pandapower format and saves it as 'filename'. Pandapower requires 'filename' to be a '.p' file.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\n"
+    "category": "function",
+    "text": "to_pandapower(grid::Grid)\n\nExport a \'grid\' to pandapower format.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\nto_pandapower(grid::Grid, filename::AbstractString)D\n\nExport a \'grid\' to pandapower format and saves it as \'filename\'. Pandapower requires \'filename\' to be a \'.p\' file.\n\nImportant: Currently, grid voltages and line properties are ignored. This function places all loads at 100kV and all generation at 380kV. Transmission lines use standard values for 110kV and 380kV lines. Transformers are automatically placed between buses that operate at different voltage values.\n\n\n\n"
 },
 
 {
     "location": "Functions.html#SyntheticGrids.save",
     "page": "Public Functions",
     "title": "SyntheticGrids.save",
-    "category": "Function",
+    "category": "function",
     "text": "save(grid::Grid, outfile::AbstractString)\n\nSave a grid in a format that can be recovered later. The format adopted is a JSON file with a particular structure.\n\n\n\n"
 },
 
@@ -436,7 +436,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.load_grid",
     "page": "Public Functions",
     "title": "SyntheticGrids.load_grid",
-    "category": "Function",
+    "category": "function",
     "text": "load_grid(filepath::AbstractString)\n\nLoad a synthetic grid from a file previously saved via save(grid::Grid). Due to conversions during the dumping and the reading of the file, floats may have some noise added. That should be within machine precision, but may affect operations such as ==.\n\n\n\n"
 },
 
@@ -452,7 +452,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.total_links",
     "page": "Public Functions",
     "title": "SyntheticGrids.total_links",
-    "category": "Function",
+    "category": "function",
     "text": "total_links(con_mat::AbstractMatrix{Bool})\n\nReturn the total number of links in a system with connectivity matrix con_mat.\n\n\n\ntotal_links(con_mat::AbstractMatrix{Integer})\n\nReturn the total number of links in a system with connectivity matrix con_mat. The graph will be treated as a simple graph.\n\n\n\n"
 },
 
@@ -460,7 +460,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.mean_node_deg",
     "page": "Public Functions",
     "title": "SyntheticGrids.mean_node_deg",
-    "category": "Function",
+    "category": "function",
     "text": "mean_node_deg(con_mat::AbstractMatrix)\n\nReturn the average nodal degree of a system with connectivity matrix con_mat.\n\n\n\n"
 },
 
@@ -468,7 +468,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.cluster_coeff",
     "page": "Public Functions",
     "title": "SyntheticGrids.cluster_coeff",
-    "category": "Function",
+    "category": "function",
     "text": "cluster_coeff(con_mat::AbstractMatrix)\n\nReturn the clustering coefficient of a system with connectivity matrix con_mat.\n\n\n\n"
 },
 
@@ -476,7 +476,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.test_connectivity",
     "page": "Public Functions",
     "title": "SyntheticGrids.test_connectivity",
-    "category": "Function",
+    "category": "function",
     "text": "test_connectivity(con_mat::AbstractMatrix{<:Integer}, verb=true)\n\nReturn true if the system with connectivity matrix con_matis connected and false otherwise. If verb=true the result will be printed onscreen together with the Fiedler eigenvalue.\n\n\n\n"
 },
 
@@ -484,15 +484,15 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.mean_shortest_path",
     "page": "Public Functions",
     "title": "SyntheticGrids.mean_shortest_path",
-    "category": "Function",
-    "text": "mean_shortest_path(conmat::AbstractMatrix{<:Real})\n\nCompute the mean shortest distance between nodes for a network represented by conmat. The conmat matrix should specify the distance between each connected node and be equal to zero whenever two nodes are not connected. Using the adjacency matrix will return the mean shortest path in hops. conmat is assumed to be symmetric. Floyd-Warshall's algorithm is used to compute the distances.\n\n\n\nmean_shortest_path(conmat::AbstractMatrix{<:Integer}, distmat::AbstractMatrix{Float64})\n\nCompute the mean shortest distance between nodes for a network with connectivity matrix conmat and distances between nodes given by distmat. Distances are computed using Floyd-Warshall's algorithm.\n\n\n\n"
+    "category": "function",
+    "text": "mean_shortest_path(conmat::AbstractMatrix{<:Real})\n\nCompute the mean shortest distance between nodes for a network represented by conmat. The conmat matrix should specify the distance between each connected node and be equal to zero whenever two nodes are not connected. Using the adjacency matrix will return the mean shortest path in hops. conmat is assumed to be symmetric. Floyd-Warshall\'s algorithm is used to compute the distances.\n\n\n\nmean_shortest_path(conmat::AbstractMatrix{<:Integer}, distmat::AbstractMatrix{Float64})\n\nCompute the mean shortest distance between nodes for a network with connectivity matrix conmat and distances between nodes given by distmat. Distances are computed using Floyd-Warshall\'s algorithm.\n\n\n\n"
 },
 
 {
     "location": "Functions.html#SyntheticGrids.robustness_line",
     "page": "Public Functions",
     "title": "SyntheticGrids.robustness_line",
-    "category": "Function",
+    "category": "function",
     "text": "robustness_line(con_mat::AbstractMatrix{<:Integer}, n=1000)\n\nReturn the average number of transmission lines that have to be randomly removed from a system with connectivity matrix con_mat before it becomes disconnected. Average is computed over n iterations.\n\n\n\n"
 },
 
@@ -500,7 +500,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Functions.html#SyntheticGrids.robustness_node",
     "page": "Public Functions",
     "title": "SyntheticGrids.robustness_node",
-    "category": "Function",
+    "category": "function",
     "text": "robustness_node(con_mat::AbstractMatrix{<:Integer}, n=1000)\n\nReturn the average number of nodes that have to be randomly removed from a system with connectivity matrix con_mat before it becomes disconnected. Average is computed over n iterations.\n\n\n\n"
 },
 
@@ -532,7 +532,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.haversine",
     "page": "Private Functions",
     "title": "SyntheticGrids.haversine",
-    "category": "Function",
+    "category": "function",
     "text": "haversine{T<:Real}(c1::Tuple{T,T}, c2::Tuple{T,T})\n\nCompute distance between two pairs of latitude and longitude using the haversine formula.\n\n\n\nhaversine(b1::Bus, b2::Bus)\n\nCompute distance between two buses from their latitude and longitude using the haversine formula.\n\n\n\n"
 },
 
@@ -540,7 +540,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.subs_dist",
     "page": "Private Functions",
     "title": "SyntheticGrids.subs_dist",
-    "category": "Function",
+    "category": "function",
     "text": "subs_dist(inds1, inds2, buses, b_dist)\n\nCompute distance between two substations using equation 1 from the REFERENCE.\n\nREFERENCE: Birchfield, Adam B., et al. \"Grid Structural Characteristics as Validation Criteria for Synthetic Networks.\" IEEE Transactions on Power Systems (2016).\n\n\n\n"
 },
 
@@ -556,15 +556,15 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.twst!",
     "page": "Private Functions",
     "title": "SyntheticGrids.twst!",
-    "category": "Function",
-    "text": "twst!(grid, k)\n\nExecute Tunable Weight Spannning Tree algorithm for the grid using weight 'k'.\n\nREFERENCE: Soltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" arXiv:1508.04447 [cs.SY], Aug. 2015.\n\n\n\n"
+    "category": "function",
+    "text": "twst!(grid, k)\n\nExecute Tunable Weight Spannning Tree algorithm for the grid using weight \'k\'.\n\nREFERENCE: Soltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" arXiv:1508.04447 [cs.SY], Aug. 2015.\n\n\n\n"
 },
 
 {
     "location": "Private.html#SyntheticGrids.reinforce!",
     "page": "Private Functions",
     "title": "SyntheticGrids.reinforce!",
-    "category": "Function",
+    "category": "function",
     "text": "reinforce!(grid, m, a, b, g, t, N)\n\nExecute the Reinforcement procedure to increase robustness of a grid.\n\nArguments:\n\nm: total number of connections\na, b, g, t: paramaters of the model (see REFERENCE)\nN: number of nearest neighbors in the average distance computation\n\nREFERENCE: Soltan, Saleh, and Gil Zussman. \"Generation of synthetic spatially embedded power grid networks.\" arXiv:1508.04447 [cs.SY], Aug. 2015.\n\n\n\n"
 },
 
@@ -572,7 +572,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.connect_buses!",
     "page": "Private Functions",
     "title": "SyntheticGrids.connect_buses!",
-    "category": "Function",
+    "category": "function",
     "text": "connect_buses!(grid)\n\nCreate reference links between buses that are connected according to the connectivity matrix of the grid.\n\n\n\n"
 },
 
@@ -580,7 +580,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.connect_subs!",
     "page": "Private Functions",
     "title": "SyntheticGrids.connect_subs!",
-    "category": "Function",
+    "category": "function",
     "text": "connect_subs!(grid)\n\nDetermine which substations are connected to each other through their buses.\n\n\n\n"
 },
 
@@ -588,32 +588,32 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.cluster_loads!",
     "page": "Private Functions",
     "title": "SyntheticGrids.cluster_loads!",
-    "category": "Function",
-    "text": "cluster_loads!(grid,nload)\n\nExecute aglomerative clustering of all load buses into 'nload' substations using geographic distances as metric.\n\n\n\n"
+    "category": "function",
+    "text": "cluster_loads!(grid,nload)\n\nExecute aglomerative clustering of all load buses into \'nload\' substations using geographic distances as metric.\n\n\n\n"
 },
 
 {
     "location": "Private.html#SyntheticGrids.fill_gen!",
     "page": "Private Functions",
     "title": "SyntheticGrids.fill_gen!",
-    "category": "Function",
-    "text": "fill_gen!(sub, gens, MW)\n\nGroup generators ('gens') into substations ('subs') by geographic proximity until generation threshold 'MW' is reached.\n\n\n\n"
+    "category": "function",
+    "text": "fill_gen!(sub, gens, MW)\n\nGroup generators (\'gens\') into substations (\'subs\') by geographic proximity until generation threshold \'MW\' is reached.\n\n\n\n"
 },
 
 {
     "location": "Private.html#SyntheticGrids.cluster_load_gen!",
     "page": "Private Functions",
     "title": "SyntheticGrids.cluster_load_gen!",
-    "category": "Function",
-    "text": "cluster_load_gen!(grid, nboth)\n\nCreate 'nboth' substations with both load and generation, chosen randomly.\n\n\n\n"
+    "category": "function",
+    "text": "cluster_load_gen!(grid, nboth)\n\nCreate \'nboth\' substations with both load and generation, chosen randomly.\n\n\n\n"
 },
 
 {
     "location": "Private.html#SyntheticGrids.cluster_gens!",
     "page": "Private Functions",
     "title": "SyntheticGrids.cluster_gens!",
-    "category": "Function",
-    "text": "cluster_gens!(grid, ngen)\n\nExecute aglomerative clustering of generators into 'ngen' substations.\n\n\n\n"
+    "category": "function",
+    "text": "cluster_gens!(grid, ngen)\n\nExecute aglomerative clustering of generators into \'ngen\' substations.\n\n\n\n"
 },
 
 {
@@ -628,7 +628,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.laplacian",
     "page": "Private Functions",
     "title": "SyntheticGrids.laplacian",
-    "category": "Function",
+    "category": "function",
     "text": "laplacian(con_mat::AbstractMatrix{<:Real})\n\nReturn the Laplacian matrix for a graph defined by adjacency matrix con_mat.\n\n\n\n"
 },
 
@@ -636,16 +636,16 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.dijkstra",
     "page": "Private Functions",
     "title": "SyntheticGrids.dijkstra",
-    "category": "Function",
-    "text": "dijkstra(con_mat::AbstractMatrix{<:Real}, v1)\n\nCompute minimum distances to each node in the network with connectivity matrix con_mat, starting from node v1, using Dijkstra's algorithm.\n\n\n\n"
+    "category": "function",
+    "text": "dijkstra(con_mat::AbstractMatrix{<:Real}, v1)\n\nCompute minimum distances to each node in the network with connectivity matrix con_mat, starting from node v1, using Dijkstra\'s algorithm.\n\n\n\n"
 },
 
 {
     "location": "Private.html#SyntheticGrids.floyd_warshall",
     "page": "Private Functions",
     "title": "SyntheticGrids.floyd_warshall",
-    "category": "Function",
-    "text": "floyd_warshall(weights::AbstractMatrix{<:Real})\n\nCompute minimum distances to each node in the network using Floyd-Warshall's algorithm. Here we assume that the weigths matrix is symmetric.\n\n\n\n"
+    "category": "function",
+    "text": "floyd_warshall(weights::AbstractMatrix{<:Real})\n\nCompute minimum distances to each node in the network using Floyd-Warshall\'s algorithm. Here we assume that the weigths matrix is symmetric.\n\n\n\n"
 },
 
 {
@@ -660,7 +660,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.linear_imped",
     "page": "Private Functions",
     "title": "SyntheticGrids.linear_imped",
-    "category": "Function",
+    "category": "function",
     "text": "linear_imped(a::Bus, b::Bus)\n\nReturn an impedance value for a transmission line connecting buses a and b, using a simple linear approximation. This value is loosely based on the two references below. Values based on resistances for dc currents at 50C and 350kV lines.\n\nREF 1: Electric Power Research Institute (EPRI). Transmission Line Reference Book, 345 kV and Above. Palo Alto, CA: The Institute, 1975. REF 2: J. Glover, M. Sarma and T. Overbye, Power System Analysis and Design. Stamford, CT: Cengage Learning, 2012.\n\n\n\n"
 },
 
@@ -668,7 +668,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.rand_imped",
     "page": "Private Functions",
     "title": "SyntheticGrids.rand_imped",
-    "category": "Function",
+    "category": "function",
     "text": "rand_imped(a::Bus, b::Bus)\n\nReturn an impedance value for a transmission line connecting buses a and b, using a simple linear approximation with a randomly chosen coefficient. The range we adopted is based on the values for ACSR cables from the ref: J. Glover, M. Sarma and T. Overbye, Power System Analysis and Design. Stanford, CT: Cengage Learning, 2012.\n\n\n\n"
 },
 
@@ -676,7 +676,7 @@ var documenterSearchIndex = {"docs": [
     "location": "Private.html#SyntheticGrids.volt_cap",
     "page": "Private Functions",
     "title": "SyntheticGrids.volt_cap",
-    "category": "Function",
+    "category": "function",
     "text": "volt_cap(a::Bus, b::Bus)\n\nReturn a current carrying capacity value for a transmission line connecting buses a and b based on their operating voltages. This value is loosely based on the reference: Electric Power Research Institute (EPRI). Transmission Line Reference Book, 345 kV and Above. Palo Alto, CA: The Institute, 1975.\n\n\n\n"
 },
 
