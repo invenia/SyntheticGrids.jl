@@ -1,6 +1,6 @@
 julia 0.6.1
 Conda 0.5.3
-PyCall 1.10.0
+PyCall 1.10.0 1.18.6
 JSON 0.8.0
 CSV 0.2.1
 AutoHashEquals 0.1.1
