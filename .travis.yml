@@ -34,7 +34,7 @@ before_install:
 script:
   - export PYTHON=""  # Configure PyCall to use the Conda.jl package's Python
   - OPTIONS=$(julia -e 'VERSION == v"0.6.0" && print("--inline=no")')  # https://github.com/JuliaLang/julia/issues/22582
-  - julia $OPTIONS -e 'Pkg.clone(pwd()); Pkg.build("SyntheticGrids"); Pkg.checkout("PyCall"); Pkg.test("SyntheticGrids"; coverage=true)'
+  - julia $OPTIONS -e 'Pkg.clone(pwd()); Pkg.build("SyntheticGrids"); Pkg.build("PyCall"); Pkg.test("SyntheticGrids"; coverage=true)'
 after_success:
   # build documentation
   - julia -e 'Pkg.add("Documenter")'
