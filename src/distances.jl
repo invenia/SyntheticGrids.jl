@@ -1,4 +1,3 @@
-using LinearAlgebra
 import Statistics: mean
 
 """

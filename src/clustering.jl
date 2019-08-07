@@ -1,5 +1,3 @@
-using Random
-
 """
     cluster_loads!(grid,nload)
 
@@ -102,7 +100,7 @@ function cluster_load_gen!(grid::Grid, nboth)
     Random.seed!(grid.seed + 66) # Just so we don't keep returning to the same point.
     s = rand(1:length(substations(grid)))
     e = MathConstants.e
-    rrange = e^(-1):SyntheticGrids.PREC:e
+    rrange = e^(-1):PREC:e
     while nb < nboth
         while substations(grid)[s].generation > 0 # ensures we are drawing a
             s = rand(1:length(substations(grid))) # load-only substation

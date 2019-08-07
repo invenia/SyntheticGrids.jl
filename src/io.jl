@@ -1,5 +1,3 @@
-using Random
-
 const CENSUSPATH = joinpath(dirname(@__FILE__), "..", "data", "Census_data.dat")
 const GENCOORDPATH = joinpath(dirname(@__FILE__), "..", "data", "Generator_coord.dat")
 const GENDATAPATH = joinpath(dirname(@__FILE__), "..", "data", "Generator_data.dat")

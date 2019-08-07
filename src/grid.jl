@@ -1,5 +1,3 @@
-using Random
-using SparseArrays
 import Statistics: mean
 
 @auto_hash_equals mutable struct Grid

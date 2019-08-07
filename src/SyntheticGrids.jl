@@ -4,12 +4,16 @@ module SyntheticGrids
 # at load time ? :/
 ENV["NUMBA_DISABLE_JIT"] = 1
 
+using Statistics
 using PyCall
 using JSON
 using CSV
 using AutoHashEquals
 using Geodesy
 using Missings
+using LinearAlgebra
+using SparseArrays
+using Random
 
 const pp = PyNULL()
 
