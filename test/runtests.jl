@@ -33,7 +33,7 @@ using JSON
         return t[1] > -t[2]/2
     end
 
-    @test_skip @testset "Basic grid creation" begin
+    @testset "Basic grid creation" begin
         place_loads_from_zips!(grid; latlim = (38, 40), longlim = (-89, -88))
         @test length(buses(grid)) == 130
 
@@ -103,7 +103,7 @@ using JSON
     end
 
     # Passing; this test_set requires the basic grid connection to pass...
-    @test_skip @testset "Clustering grids" begin
+    @testset "Clustering grids" begin
         count = SyntheticGrids.count_bus_type(grid)
         cluster!(
             grid,
@@ -135,7 +135,7 @@ using JSON
 
     @testset "Input and Output" begin
         # Passing
-        @test_skip @testset "Pandapower interface" begin
+        @testset "Pandapower interface" begin
             pgrid = to_pandapower(grid, DUMMYPPC)
             @test length(pgrid.trafo) == 31
             pgrid = SyntheticGrids.load_pp_grid(DUMMYPPC)
@@ -153,7 +153,7 @@ using JSON
         end
 
         # Passing
-        @test_skip @testset "Save and Load Grid" begin
+        @testset "Save and Load Grid" begin
             g_rid = create_grid()
             save(g_rid, GRIDPATH)
             lgrid = load_grid(GRIDPATH)
