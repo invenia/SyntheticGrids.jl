@@ -19,3 +19,6 @@
 /docs/site/
 
 /deps/build.log
+
+/Manifest.toml
+.idea/*
