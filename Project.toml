@@ -1,6 +1,8 @@
 name = "SyntheticGrids"
 uuid = "34f115b4-9156-5266-a33d-ca359e631fb8"
 author = "Invenia Technical Computing"
+version = "v0.1.0"
+license = "MIT"
 
 [deps]
 AutoHashEquals = "15f4f7f2-30c1-5605-9d31-71845cf9641f"
