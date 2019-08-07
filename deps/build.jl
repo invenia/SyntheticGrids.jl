@@ -21,6 +21,8 @@ elseif LLVM_VERSION >= v"3.7.0"
     v"0.12.1"
 elseif LLVM_VERSION >= v"3.6.0"
     v"0.8.0"
+elseif LLVM_VERSION >= v"3.5.0"
+    v"0.5.1"
 else
     error("Can't find a version of llvmlite that supports $LLVM_VERSION")
 end
