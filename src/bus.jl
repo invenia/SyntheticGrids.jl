@@ -12,7 +12,7 @@ struct LoadBus <: Bus
     end
 end
 
-function LoadBus{T <: Real}(
+function LoadBus(
         id,
         coords::Tuple{T,T},
         load,
@@ -20,7 +20,7 @@ function LoadBus{T <: Real}(
         pop,
         connected_to = Set(),
         connections = Set()
-    )
+    ) where T <: Real
     return LoadBus(
         id,
         LatLon(coords[1], coords[2]),
@@ -36,14 +36,14 @@ function LoadBus(coords::LatLon, load, volt, pop, connected_to = Set(), connecti
     return LoadBus(-1, coords, load, volt, pop, connected_to, connections)
 end
 
-function LoadBus{T <: Real}(
+function LoadBus(
         coords::Tuple{T,T},
         load,
         volt,
         pop,
         connected_to = Set(),
         connections = Set()
-    )
+    ) where T <: Real
     return LoadBus(
         -1,
         LatLon(coords[1], coords[2]),
@@ -121,7 +121,7 @@ struct GenBus <: Bus # this actually represents a power plant
     end
 end
 
-function GenBus{T <: Real}(
+function GenBus(
     id,
     coords::Tuple{T,T},
     gen,
@@ -133,7 +133,7 @@ function GenBus{T <: Real}(
     summgen = -1,
     wintgen = -1,
     gens = []
-)
+) where T <: Real
     return GenBus(
         id,
         LatLon(coords[1], coords[2]),
@@ -176,7 +176,7 @@ function GenBus(
     )
 end
 
-function GenBus{T <: Real}(
+function GenBus(
     coords::Tuple{T,T},
     gen,
     volt,
@@ -187,7 +187,7 @@ function GenBus{T <: Real}(
     summgen = -1,
     wintgen = -1,
     gens = []
-)
+) where T <: Real
     return GenBus{T <: Real}(
         -1,
         coords::Tuple{T,T},
@@ -282,7 +282,7 @@ function ==(a::Union{LoadBus, GenBus}, b::Union{LoadBus, GenBus})
         hash(a.connections) == hash(b.connections) &&
         length(a.connected_to) == length(b.connected_to) || return false
 
-        pair = (object_id(a), object_id(b))
+        pair = (objectid(a), objectid(b))
         if !(pair in compared)
             push!(compared, pair)
 
@@ -305,7 +305,7 @@ function ==(a::Union{LoadBus, GenBus}, b::Union{LoadBus, GenBus})
         a.wintgen == b.wintgen &&
         a.gens == b.gens || return false
 
-        pair = (object_id(a), object_id(b))
+        pair = (objectid(a), objectid(b))
         if !(pair in compared)
             push!(compared, pair)
 

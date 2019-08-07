@@ -13,7 +13,7 @@
                            # "OA" and "OS" - Out of service
 end
 
-function Generator{T <: Real}(
+function Generator(
         coords::Tuple{T,T},
         volt,
         tech,
@@ -24,7 +24,7 @@ function Generator{T <: Real}(
         wcap,
         shut2loadtime,
         status
-    )
+    ) where T <: Real
     return Generator(
         LatLon(coords[1], coords[2]),
         volt,
