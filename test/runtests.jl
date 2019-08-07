@@ -4,6 +4,8 @@ using JSON
 
 @testset "SyntheticGrids" begin
     SEED = 666
+    LATLIM = (38, 40)
+    LONGLIM = (-89, -88)
     GENPATH = joinpath(dirname(@__FILE__), "..", "data", "GenData.json")
     CENSUSPATH = joinpath(dirname(@__FILE__), "..", "data", "Census_data.dat")
     GENCOORDPATH = joinpath(dirname(@__FILE__), "..", "data", "Generator_coord.dat")
@@ -21,20 +23,16 @@ using JSON
         return grid
     end
 
-    function simple_func(t::Tuple)
-        return t[1] > -t[2]/2
-    end
-
     @testset "Grids" begin
         @testset "Load bus length" begin
             grid = Grid(SEED)
-            place_loads_from_zips!(grid; latlim = (38, 40), longlim = (-89, -88))
+            place_loads_from_zips!(grid; latlim=LATLIM, longlim=LONGLIM)
             @test length(buses(grid)) == 130
         end
 
         @testset "Gen bus length" begin
             grid = Grid(SEED)
-            place_gens_from_data!(grid; latlim = (38, 40), longlim = (-89, -88))
+            place_gens_from_data!(grid; latlim=LATLIM, longlim=LONGLIM)
             @test length(buses(grid)) == 17
         end
 
