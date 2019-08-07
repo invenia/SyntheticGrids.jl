@@ -431,8 +431,8 @@ Currently, grid voltages and line properties are ignored. This function places a
 voltage values.
 """
 function to_pandapower(grid::Grid,)
-    LOAD_VOLT = 110 # kV # This is a crude approximation
-    GEN_VOLT = 380 # kV # This is a crude approximation
+    LOAD_VOLT = 110 # kV, this is a crude approximation
+    GEN_VOLT = 380 # kV, this is a crude approximation
     voltage(bus::LoadBus) = LOAD_VOLT
     voltage(bus::GenBus) = GEN_VOLT
 

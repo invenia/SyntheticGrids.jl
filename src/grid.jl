@@ -39,7 +39,6 @@ function add_load!(grid::Grid, args...; reconnect = false)
     add_bus!(grid, bus, reconnect = reconnect)
 end
 
-
 """
     add_gen!(grid::Grid, args...; reconnect = false)
 

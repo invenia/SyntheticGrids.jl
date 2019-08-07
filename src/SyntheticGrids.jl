@@ -19,7 +19,7 @@ const pp = PyNULL()
 
 # https://github.com/JuliaPy/PyCall.jl#using-pycall-from-julia-modules
 function __init__()
-    copy!(pp, pyimport_conda("pandapower", "pandapower"))
+    copy!(pp, pyimport_conda("pandapower", "pandapower", "invenia"))
 end
 
 export
