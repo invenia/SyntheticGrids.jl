@@ -22,3 +22,6 @@
 
 /Manifest.toml
 .idea/*
+
+build/*
+/data/dummy.json
