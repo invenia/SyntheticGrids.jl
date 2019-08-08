@@ -116,9 +116,6 @@ using JSON
         @testset "Pandapower interface" begin
             grid = baseline_grid()
             pgrid = to_pandapower(grid, DUMMYPPC)
-
-            println(pgrid.trafo)
-            exit()
             @test length(pgrid.trafo) == 31
             pgrid = SyntheticGrids.load_pp_grid(DUMMYPPC)
             @test length(pgrid.trafo) == 31

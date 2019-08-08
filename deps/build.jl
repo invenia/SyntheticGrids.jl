@@ -1,6 +1,7 @@
 using Conda
 
-ENV["PYTHON"]=" "  # Configure PyCall.jl to use Conda.jl's Python
+ENV["PYTHON"]=""  # Configure PyCall.jl to use Conda.jl's Python
+ENV["PATH"] = "$(Conda.BINDIR);$(ENV["PATH"])"  # Add Conda.BINDIR to pathing so DLLs map on Windows
 
 # We need install a specific version of llvmlite which supports the same minor version of
 # llvm used with Julia. https://github.com/numba/llvmlite#compatibility
@@ -28,11 +29,12 @@ else
 end
 
 Conda.update()
+Conda.add_channel("conda-forge")
+Conda.add("numpy==1.17.0")
 Conda.add_channel("numba")  # channel containing llvmlite
 Conda.add("llvmlite==$LLVMLITE_VERSION")  # https://github.com/numba/llvmlite
 Conda.add_channel("invenia")
-Conda.add("pandapower")
-Conda.add("numpy")
+Conda.add("pandapower==2.1.0")
 @info "Verifying pandapower install..."
 python_bin = joinpath(Conda.PYTHONDIR, "python")
 run(`$python_bin -c "import pandapower, pandapower.networks, pandapower.topology, pandapower.plotting, pandapower.converter, pandapower.estimation"`)

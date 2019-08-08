@@ -14,12 +14,14 @@ using Missings
 using LinearAlgebra
 using SparseArrays
 using Random
+using Test
+using Documenter
 
 const pp = PyNULL()
 
 # https://github.com/JuliaPy/PyCall.jl#using-pycall-from-julia-modules
 function __init__()
-    copy!(pp, pyimport_conda("pandapower", "pandapower", "invenia"))
+    copy!(pp, pyimport_conda("pandapower", "pandapower==2.1.0", "invenia"))
 end
 
 export
