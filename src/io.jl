@@ -223,8 +223,8 @@ function prepare_gen_data(
     for p in plants
         plant_dict = [Dict(k => v for (k,v) in zip(keys,g)) for g in p]
 
-        for plant in plant_dict
-            format_gen!(plant)
+        for gen in plant_dict
+            format_gen!(gen)
         end
 
         push!(fplants, plant_dict)
@@ -431,8 +431,8 @@ Currently, grid voltages and line properties are ignored. This function places a
 voltage values.
 """
 function to_pandapower(grid::Grid,)
-    LOAD_VOLT = 110 # kV, this is a crude approximation
-    GEN_VOLT = 380 # kV, this is a crude approximation
+    LOAD_VOLT = 0.11 # mV, this is a crude approximation
+    GEN_VOLT = 0.38 # mV, this is a crude approximation
     voltage(bus::LoadBus) = LOAD_VOLT
     voltage(bus::GenBus) = GEN_VOLT
 
@@ -455,7 +455,7 @@ function to_pandapower(grid::Grid,)
             pp.create_load(
                 pgrid,
                 bus = (i-1), # Adopting zero indexing because this is for Python.
-                p_mw = buses(grid)[i].load, # MW to kW
+                p_mw = buses(grid)[i].load,
                 controllable = false # for OPF
             )
         else
@@ -465,10 +465,10 @@ function to_pandapower(grid::Grid,)
                 pp.create_gen(
                     pgrid,
                     bus = (i-1), # Adopting zero indexing because this is for Python.
-                    p_mw = gen.cap * -1,  # Negative for generation
+                    p_mw = -gen.cap,  # Negative for generation
                     name = gen.tech,
-                    max_p_mw = gen.minload * -1,  # Negative for generation
-                    min_p_mw = gen.cap * -1,  # Negative for genereation
+                    max_p_mw = -gen.minload,  #  Min inverts with max because negative
+                    min_p_mw = -gen.cap,  # Negative for genereation
                     controllable = true, # for OPF
                 )
             end

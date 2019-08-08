@@ -103,6 +103,13 @@ using JSON
             @test robustness_line(grid.sub_conn, 10) > 1
             @test robustness_node(grid.sub_conn, 10) > 1
         end
+
+        @testset "Test seeding and object comparison" begin
+            grid = baseline_grid()
+            grid1 = baseline_grid()
+
+            @test grid == grid1
+        end
     end
 
     @testset "Input and Output" begin
