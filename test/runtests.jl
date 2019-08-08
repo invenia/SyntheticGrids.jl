@@ -14,7 +14,7 @@ using JSON
     DUMMYPPC = joinpath(dirname(@__FILE__), "..", "data", "dummy.p")
     GRIDPATH = joinpath(dirname(@__FILE__), "..", "data", "testgrid.json")
 
-    function baseline_grid(seed=666, latlim=(38, 40), longlim=(-89, -88))
+    function baseline_grid(seed=666, latlim=LATLIM, longlim=LONGLIM)
         grid = Grid(seed)
         place_loads_from_zips!(grid; latlim=latlim, longlim=longlim)
         place_gens_from_data!(grid; latlim=latlim, longlim=longlim)
@@ -116,6 +116,9 @@ using JSON
         @testset "Pandapower interface" begin
             grid = baseline_grid()
             pgrid = to_pandapower(grid, DUMMYPPC)
+
+            println(pgrid.trafo)
+            exit()
             @test length(pgrid.trafo) == 31
             pgrid = SyntheticGrids.load_pp_grid(DUMMYPPC)
             @test length(pgrid.trafo) == 31

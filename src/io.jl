@@ -467,7 +467,7 @@ function to_pandapower(grid::Grid,)
                     bus = (i-1), # Adopting zero indexing because this is for Python.
                     p_mw = -gen.cap,  # Negative for generation
                     name = gen.tech,
-                    max_p_mw = -gen.minload,  #  Min inverts with max because negative
+                    max_p_mw = -gen.minload,  # Min inverts with max because negative
                     min_p_mw = -gen.cap,  # Negative for genereation
                     controllable = true, # for OPF
                 )
