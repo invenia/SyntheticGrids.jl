@@ -1,7 +1,6 @@
 using Conda
 
 ENV["PYTHON"]=""  # Configure PyCall.jl to use Conda.jl's Python
-ENV["PATH"] = "$(Conda.BINDIR);$(ENV["PATH"])"  # Add Conda.BINDIR to pathing so DLLs map on Windows
 
 # We need install a specific version of llvmlite which supports the same minor version of
 # llvm used with Julia. https://github.com/numba/llvmlite#compatibility
