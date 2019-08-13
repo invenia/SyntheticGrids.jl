@@ -1,6 +1,6 @@
 using Conda
 
-ENV["PYTHON"]=""  # Configure PyCall.jl to use Conda.jl's Python
+ENV["PYTHON"] = ""  # Configure PyCall.jl to use Conda.jl's Python
 
 # We need install a specific version of llvmlite which supports the same minor version of
 # llvm used with Julia. https://github.com/numba/llvmlite#compatibility

@@ -1,5 +1,3 @@
-import Statistics: mean
-
 """
     bus_dist(b1::Bus, b2::Bus)
 
@@ -38,7 +36,7 @@ function haversine(b1::Bus, b2::Bus)
     return haversine(b1.coords, b2.coords)
 end
 
-function mean(v::Vector{LatLon{T}}) where T <: Real
+function Statistics.mean(v::Vector{<:LatLon})
     xmean = mean([c.lat for c in v])
     ymean = mean([c.lon for c in v])
     return LatLon(xmean, ymean)

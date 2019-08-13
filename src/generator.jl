@@ -14,7 +14,7 @@
 end
 
 function Generator(
-        coords::Tuple{T,T},
+        coords::Tuple{T,T} where T <: Real,
         volt,
         tech,
         cap,
@@ -24,7 +24,7 @@ function Generator(
         wcap,
         shut2loadtime,
         status
-    ) where T <: Real
+    )
     return Generator(
         LatLon(coords[1], coords[2]),
         volt,

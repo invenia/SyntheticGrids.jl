@@ -26,17 +26,11 @@ notifications:
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - |
-    julia -e '
-      VERSION >= v"0.7.0-DEV.3656" && using Pkg
+    julia --project -e '
+      # python 3.7 does not seem to work correctly, so lets try manually setting the root python version to 3.6
       ENV["PYTHON"] = ""
-      # python 3.7 does not seem to work correctly, so lets try manually setting the root python version
-      # to 3.6
-      Pkg.add("Conda"); using Conda; Conda.add("python=3.6")
-      if VERSION >= v"0.7.0-DEV.5183" && (isfile("Project.toml") || isfile("JuliaProject.toml"))
-          Pkg.build(); Pkg.build("PyCall"); Pkg.test(coverage=true)
-      else
-          Pkg.clone(pwd()); Pkg.build("PyCall"); Pkg.build("SyntheticGrids"); Pkg.test("SyntheticGrids"; coverage=true)
-      end'
+      using Pkg; Pkg.add("Conda"); using Conda; Conda.add("python=3.6");
+      Pkg.build(); Pkg.build("PyCall"); Pkg.test(coverage=true)'
 after_success:
   - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
 jobs:

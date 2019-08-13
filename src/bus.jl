@@ -14,13 +14,13 @@ end
 
 function LoadBus(
         id,
-        coords::Tuple{T,T},
+        coords::Tuple{T,T} where T <: Real,
         load,
         volt,
         pop,
         connected_to = Set(),
         connections = Set()
-    ) where T <: Real
+    )
     return LoadBus(
         id,
         LatLon(coords[1], coords[2]),
@@ -37,13 +37,13 @@ function LoadBus(coords::LatLon, load, volt, pop, connected_to = Set(), connecti
 end
 
 function LoadBus(
-        coords::Tuple{T,T},
+        coords::Tuple{T,T} where T <: Real,
         load,
         volt,
         pop,
         connected_to = Set(),
         connections = Set()
-    ) where T <: Real
+    )
     return LoadBus(
         -1,
         LatLon(coords[1], coords[2]),
@@ -123,7 +123,7 @@ end
 
 function GenBus(
     id,
-    coords::Tuple{T,T},
+    coords::Tuple{T,T} where T <: Real,
     gen,
     volt,
     tech,
@@ -133,7 +133,7 @@ function GenBus(
     summgen = -1,
     wintgen = -1,
     gens = []
-) where T <: Real
+)
     return GenBus(
         id,
         LatLon(coords[1], coords[2]),
@@ -177,7 +177,7 @@ function GenBus(
 end
 
 function GenBus(
-    coords::Tuple{T,T},
+    coords::Tuple{T,T}  where T <: Real,
     gen,
     volt,
     tech,
@@ -187,7 +187,7 @@ function GenBus(
     summgen = -1,
     wintgen = -1,
     gens = []
-) where T <: Real
+)
     return GenBus{T <: Real}(
         -1,
         coords::Tuple{T,T},

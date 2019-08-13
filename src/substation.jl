@@ -15,14 +15,14 @@ end
 
 function Substation(
     id,
-    coords::Tuple{T,T},
+    coords::Tuple{T,T} where T <: Real,
     volts,
     load,
     gen,
     pop,
     con=Set(),
     group=[]
-) where T <: Real
+)
     return Substation(
         id,
         LatLon(coords[1], coords[2]),
@@ -40,14 +40,14 @@ function Substation(coords::LatLon, volts, load, gen, pop, con = Set(), group = 
 end
 
 function Substation(
-    coords::Tuple{T,T},
+    coords::Tuple{T,T} where T <: Real,
     volts,
     load,
     gen,
     pop,
     con=Set(),
     group=[]
-) where T <: Real
+)
     return Substation(
         -1,
         LatLon(coords[1], coords[2]),

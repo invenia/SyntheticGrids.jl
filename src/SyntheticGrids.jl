@@ -4,18 +4,15 @@ module SyntheticGrids
 # at load time ? :/
 ENV["NUMBA_DISABLE_JIT"] = 1
 
-using Statistics
-using PyCall
-using JSON
-using CSV
 using AutoHashEquals
+using CSV
 using Geodesy
-using Missings
+using JSON
 using LinearAlgebra
+using PyCall
+using Random: seed!
 using SparseArrays
-using Random
-using Test
-using Documenter
+using Statistics: Statistics, mean
 
 const pp = PyNULL()
 
@@ -79,8 +76,8 @@ load_grid
 import Base.==
 import Base.show
 import Base.hash
-import Base.mean
 import Base.merge!
+
 global const PREC = 1.0e-6 # Precision for random number generation
 global const LARGE_GRID_N = 2000 # defines what is considered a large grid
 abstract type Bus end

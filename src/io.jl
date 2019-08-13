@@ -60,7 +60,7 @@ function place_loads_from_zips!(
         z[4]<longlim[2]
     ]
 
-    Random.seed!(grid.seed + 23) # Just so we don't keep returning to the same point.
+    seed!(grid.seed + 23) # Just so we don't keep returning to the same point.
     for zip in fzips
         dummy = LoadBus(-1, (zip[3],zip[4]), -1, -1, zip[2])
         push!(
@@ -107,7 +107,7 @@ function place_loads_from_zips!(
     allzips = zipcode_builder(datapath)
     fzips = [z for z in allzips if geolim((z[3], z[4]))]
 
-    Random.seed!(grid.seed + 23) # Just so we don't keep returning to the same point.
+    seed!(grid.seed + 23) # Just so we don't keep returning to the same point.
     for zip in fzips
         dummy = LoadBus(-1, (zip[3],zip[4]), -1, -1, zip[2])
         push!(
@@ -124,7 +124,8 @@ function place_loads_from_zips!(
 end
 
 function get_plant_data(coordpath=GENCOORDPATH)
-    column_types = Dict("Grid Voltage (kV)" => Float64, "Grid Voltage 2 (kV)" => Float64, "Grid Voltage 3 (kV)" => Float64)
+    column_names = ["Grid Voltage (kV)", "Grid Voltage 2 (kV)", "Grid Voltage 3 (kV)"]
+    column_types = Dict(Pair.(column_names, Float64))
     df = CSV.read(coordpath, types=column_types)
     pcodes = sizehint!(Int[], size(df, 1))
     pcoords = sizehint!([], size(df, 1))
@@ -137,7 +138,7 @@ function get_plant_data(coordpath=GENCOORDPATH)
         )
         vs = Real[]
 
-        for s in [Symbol("Grid Voltage (kV)"), Symbol("Grid Voltage 2 (kV)"), Symbol("Grid Voltage 3 (kV)")]
+        for s in Symbol.(column_names)
             if !ismissing(df[i, s])
                 push!(vs, df[i, s])
             end
@@ -218,10 +219,10 @@ function prepare_gen_data(
 )
     plants = get_gen_data(indata, incoord)
     fplants = sizehint!([], length(plants))
-    keys = ["coords", "volt", "tech", "cap", "pfactor", "minload", "scap",
+    _keys = ["coords", "volt", "tech", "cap", "pfactor", "minload", "scap",
             "wcap", "shut2loadtime", "status"]
     for p in plants
-        plant_dict = [Dict(k => v for (k,v) in zip(keys,g)) for g in p]
+        plant_dict = [Dict(k => v for (k,v) in zip(_keys,g)) for g in p]
 
         for gen in plant_dict
             format_gen!(gen)

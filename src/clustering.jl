@@ -25,7 +25,7 @@ function cluster_loads!(grid::Grid, nload)
     all_ids = [l.id for l in loads]
     id2ind = Dict{Int, Int}()
     for id in all_ids
-        id2ind[id] = findfirst(x->x==id, all_ids)
+        id2ind[id] = findfirst(==(id), all_ids)
     end
     m = length(loads)
     sum_pops = fill(0, (m, m))
@@ -41,14 +41,14 @@ function cluster_loads!(grid::Grid, nload)
         ok = false
         i = j = -1
         while true
-            m = findmin(sub_dist)[2]  # [2] is the index of the smallest item
+            m = argmin(sub_dist)
             if sub_dist[m] == Inf # Can't cluster anymore without going over POPLIMIT
                 warn("Can't cluster anymore without going over population limit!")
                 warn("Stopping clustering process before target number is reached")
                 nload = Inf
                 break
             end
-            i, j = Tuple(CartesianIndices(size(sub_dist))[m])
+            i, j = Tuple(m)
             if (substations(grid)[i].population + substations(grid)[j].population) < POPLIMIT
                 break
             else # this keeps loads from clustering beyond the population limit
@@ -80,7 +80,7 @@ until generation threshold 'MW' is reached.
 function fill_gen!(sub, gens, MW)
     dists = [haversine(sub, g) for g in gens]
     while sub.generation < MW
-        m = findmin(dists)[2]  # [2] is the index of the smallest item
+        m = argmin(dists)
         sub.generation += gens[m].generation
         sub.voltages = [v for v in Set(vcat(sub.voltages, gens[m].voltage))]
         push!(sub.grouping, gens[m])
@@ -97,7 +97,7 @@ Create 'nboth' substations with both load and generation, chosen randomly.
 function cluster_load_gen!(grid::Grid, nboth)
     gens = [bus for bus in buses(grid) if isa(bus, GenBus)]
     nb = 0
-    Random.seed!(grid.seed + 66) # Just so we don't keep returning to the same point.
+    seed!(grid.seed + 66) # Just so we don't keep returning to the same point.
     s = rand(1:length(substations(grid)))
     e = MathConstants.e
     rrange = e^(-1):PREC:e
@@ -142,9 +142,9 @@ function cluster_gens!(grid::Grid, ngen)
     end
     dists = distance(g_subs)
     while length(g_subs) > ngen
-        m = findmin(dists)[2]  # [2] is the index of the smallest item
+        m = argmin(dists)
         n = length(g_subs)
-        ii, jj = Tuple(CartesianIndices(size(dists))[m])
+        ii, jj = Tuple(m)
         merge!(grid, ii + st, jj + st)
         deleteat!(g_subs, jj)
         # Update substation distances
