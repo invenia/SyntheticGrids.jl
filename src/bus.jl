@@ -12,9 +12,9 @@ struct LoadBus <: Bus
     end
 end
 
-function LoadBus{T <: Real}(
+function LoadBus(
         id,
-        coords::Tuple{T,T},
+        coords::Tuple{T,T} where T <: Real,
         load,
         volt,
         pop,
@@ -36,8 +36,8 @@ function LoadBus(coords::LatLon, load, volt, pop, connected_to = Set(), connecti
     return LoadBus(-1, coords, load, volt, pop, connected_to, connections)
 end
 
-function LoadBus{T <: Real}(
-        coords::Tuple{T,T},
+function LoadBus(
+        coords::Tuple{T,T} where T <: Real,
         load,
         volt,
         pop,
@@ -121,9 +121,9 @@ struct GenBus <: Bus # this actually represents a power plant
     end
 end
 
-function GenBus{T <: Real}(
+function GenBus(
     id,
-    coords::Tuple{T,T},
+    coords::Tuple{T,T} where T <: Real,
     gen,
     volt,
     tech,
@@ -176,8 +176,8 @@ function GenBus(
     )
 end
 
-function GenBus{T <: Real}(
-    coords::Tuple{T,T},
+function GenBus(
+    coords::Tuple{T,T}  where T <: Real,
     gen,
     volt,
     tech,
@@ -282,7 +282,7 @@ function ==(a::Union{LoadBus, GenBus}, b::Union{LoadBus, GenBus})
         hash(a.connections) == hash(b.connections) &&
         length(a.connected_to) == length(b.connected_to) || return false
 
-        pair = (object_id(a), object_id(b))
+        pair = (objectid(a), objectid(b))
         if !(pair in compared)
             push!(compared, pair)
 
@@ -305,7 +305,7 @@ function ==(a::Union{LoadBus, GenBus}, b::Union{LoadBus, GenBus})
         a.wintgen == b.wintgen &&
         a.gens == b.gens || return false
 
-        pair = (object_id(a), object_id(b))
+        pair = (objectid(a), objectid(b))
         if !(pair in compared)
             push!(compared, pair)
 

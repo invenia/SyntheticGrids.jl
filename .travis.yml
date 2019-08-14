@@ -1,45 +1,44 @@
-## Documentation: http://docs.travis-ci.com/user/languages/julia/
+# Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
-os:
-  - linux
-  - osx
 julia:
-  - 0.6
+  - 1.0
+  - 1.1
+  - 1.2
   - nightly
+os:
+  - osx
+  - linux
+  - windows
+matrix:
+  exclude:
+    - os: windows
+      julia: 1.0
+    - os: windows
+      julia: 1.1
+    - os: windows
+      julia: nightly
+  allow_failures:
+    - julia: nightly
+    - os: windows
+  fast_finish: true
 notifications:
   email: false
-git:
-  depth: 99999999
-sudo: true
-
-## uncomment the following lines to allow failures on nightly julia
-## (tests will run but not make your overall status red)
-matrix:
-  allow_failures:
-  - julia: nightly
-
-## uncomment and modify the following lines to manually install system packages
-#addons:
-#  apt: # apt-get for linux
-#    packages:
-#    - gfortran
-#before_script: # homebrew for mac
-#  - if [ $TRAVIS_OS_NAME = osx ]; then brew install gcc; fi
-
-before_install:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    sudo apt-get install hdf5-tools;
-  fi
-## uncomment the following lines to override the default test script
 script:
-  - export PYTHON=""  # Configure PyCall to use the Conda.jl package's Python
-  - OPTIONS=$(julia -e 'VERSION == v"0.6.0" && print("--inline=no")')  # https://github.com/JuliaLang/julia/issues/22582
-  - julia $OPTIONS -e 'Pkg.clone(pwd()); Pkg.build("SyntheticGrids"); Pkg.build("PyCall"); Pkg.test("SyntheticGrids"; coverage=true)'
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - |
+    julia --project -e '
+      # python 3.7 does not seem to work correctly, so lets try manually setting the root python version to 3.6
+      ENV["PYTHON"] = ""
+      using Pkg; Pkg.add("Conda"); using Conda; Conda.add("python=3.6");
+      Pkg.build(); Pkg.build("PyCall"); Pkg.test(coverage=true)'
 after_success:
-  # build documentation
-  - julia -e 'Pkg.add("Documenter")'
-  - julia -e 'cd(Pkg.dir("SyntheticGrids")); include(joinpath("docs", "make.jl"))'
-  # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("SyntheticGrids")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
-  # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("SyntheticGrids")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        - julia --project=docs/ -e 'using Pkg; Pkg.add("Documenter")' docs/make.jl
+      after_success: skip

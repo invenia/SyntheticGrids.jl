@@ -17,7 +17,7 @@ Return the Laplacian matrix for a graph defined by adjacency matrix `con_mat`.
 """
 function laplacian(conmat::AbstractMatrix{Bool})
     lap = zeros(Int, size(conmat))
-    degree = sum(conmat, 1) # this gives the node degrees
+    degree = sum(conmat, dims=1) # this gives the node degrees
     n = length(degree)
     for j in 1:(n - 1), i in (j + 1):n
         if conmat[i,j] > 0
@@ -63,7 +63,7 @@ end
 Return the average nodal degree of a system with connectivity matrix `con_mat`.
 """
 function mean_node_deg(con_mat::AbstractArray{Bool, 2})
-    return mean(sum(con_mat, 1))
+    return mean(sum(con_mat, dims=1))
 end
 
 function mean_node_deg(con_mat::AbstractArray{Int, 2})
@@ -129,11 +129,11 @@ otherwise. If `verb=true` the result will be printed onscreen together with the 
 eigenvalue.
 """
 function test_connectivity(con_mat::AbstractMatrix{<:Integer}, verb=true)
-    const zero_tol = 1e-13 # tolerance for zero due to numerical noise
+    ZERO_TOL = 1e-13 # tolerance for zero due to numerical noise
     lap = laplacian(con_mat)
     evals = eigvals(lap)
     sort!(evals)
-    if length(evals) > 1 && evals[2] > zero_tol
+    if length(evals) > 1 && evals[2] > ZERO_TOL
         fiedler = evals[2]
         if verb
             println("Fiedler eigenvalue: $fiedler. System is connected.")

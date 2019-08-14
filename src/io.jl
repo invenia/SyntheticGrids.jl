@@ -5,7 +5,7 @@ const GENJSONPATH = joinpath(dirname(@__FILE__), "..", "data", "GenData.json")
 
 function zipcode_builder(datapath = CENSUSPATH)
     df = CSV.read(datapath, delim='\t')
-    zipcodes = Vector(size(df, 1))
+    zipcodes = Vector(undef, size(df, 1))
     for i in 1:size(df, 1)
         zip = [df[i, 1], df[i, 2], df[i, 8], df[i, 9]]
         zipcodes[i] = zip
@@ -60,7 +60,7 @@ function place_loads_from_zips!(
         z[4]<longlim[2]
     ]
 
-    srand(grid.seed + 23) # Just so we don't keep returning to the same point.
+    seed!(grid.seed + 23) # Just so we don't keep returning to the same point.
     for zip in fzips
         dummy = LoadBus(-1, (zip[3],zip[4]), -1, -1, zip[2])
         push!(
@@ -107,7 +107,7 @@ function place_loads_from_zips!(
     allzips = zipcode_builder(datapath)
     fzips = [z for z in allzips if geolim((z[3], z[4]))]
 
-    srand(grid.seed + 23) # Just so we don't keep returning to the same point.
+    seed!(grid.seed + 23) # Just so we don't keep returning to the same point.
     for zip in fzips
         dummy = LoadBus(-1, (zip[3],zip[4]), -1, -1, zip[2])
         push!(
@@ -123,8 +123,10 @@ function place_loads_from_zips!(
     end
 end
 
-function get_plant_data(coordpath = GENCOORDPATH)
-    df = CSV.read(coordpath, rows_for_type_detect=typemax(Int))
+function get_plant_data(coordpath=GENCOORDPATH)
+    column_names = ["Grid Voltage (kV)", "Grid Voltage 2 (kV)", "Grid Voltage 3 (kV)"]
+    column_types = Dict(Pair.(column_names, Float64))
+    df = CSV.read(coordpath, types=column_types)
     pcodes = sizehint!(Int[], size(df, 1))
     pcoords = sizehint!([], size(df, 1))
     pvolts = sizehint!([], size(df, 1))
@@ -135,11 +137,8 @@ function get_plant_data(coordpath = GENCOORDPATH)
             (df[i, Symbol("Latitude")], df[i, Symbol("Longitude")])
         )
         vs = Real[]
-        for s in [
-            Symbol("Grid Voltage (kV)"),
-            Symbol("Grid Voltage 2 (kV)"),
-            Symbol("Grid Voltage 3 (kV)")
-        ]
+
+        for s in Symbol.(column_names)
             if !ismissing(df[i, s])
                 push!(vs, df[i, s])
             end
@@ -170,7 +169,7 @@ function get_gen_data(
         "Time from Cold Shutdown to Full Load",
         "Status"
     ]
-    df = CSV.read(datapath, rows_for_type_detect=typemax(Int))
+    df = CSV.read(datapath)
     tempdata = sizehint!([], size(df, 1))
     for i in 1:size(df, 1)
         gdata = []
@@ -220,13 +219,16 @@ function prepare_gen_data(
 )
     plants = get_gen_data(indata, incoord)
     fplants = sizehint!([], length(plants))
-    keys = ["coords", "volt", "tech", "cap", "pfactor", "minload", "scap",
+    _keys = ["coords", "volt", "tech", "cap", "pfactor", "minload", "scap",
             "wcap", "shut2loadtime", "status"]
     for p in plants
-        push!(fplants, [Dict(k => v for (k,v) in zip(keys,g)) for g in p])
-        for g in fplants[end]
-            format_gen!(g)
+        plant_dict = [Dict(k => v for (k,v) in zip(_keys,g)) for g in p]
+
+        for gen in plant_dict
+            format_gen!(gen)
         end
+
+        push!(fplants, plant_dict)
     end
 
     open(outfile, "w") do f
@@ -282,7 +284,7 @@ function place_gens_from_data!(
             genbs,
             [
                 Generator(
-                    (g["coords"][1],g["coords"][2]),
+                    (g["coords"][1], g["coords"][2]),
                     g["volt"],
                     g["tech"],
                     g["cap"],
@@ -374,80 +376,13 @@ function place_gens_from_data!(
     place_gens_from_data!(grid, plants, pfactorfunc)
 end
 
-# """
-#     place_gens_from_data_old!(grid::Grid, latlim=(-Inf,Inf),
-#                       longlim=(-Inf,Inf), datapath="Generator_data.dat",
-#                       coordpath = "Generator_coord.dat", pfactorfunc = pfacwavg)
-#
-# OBSOLETE. Create generation buses based on power plant data.
-# Obsolete now that we have a standalone function for creating a json with the
-# data. Reading in the json file via place_gens_from_data!() is considerably faster.
-#
-# # Arguments:
-# * grid: Grid instance which will be populated.
-# * latlim: Tuple of the form (minimum latitude, maximum latitude).
-# * longlim: Tuple of the form (minimum longitude, maximum longitude).
-# * datapath: Path to the text file containing detailed generator information.
-# * coordpath: Path to the text file containing power plant information.
-# * pfactorfunc: Function for computing bus power factor based on some rule.
-#
-# REFERENCE: https://www.eia.gov/electricity/data/eia860/index.html
-# """
-# function place_gens_from_data_old!(
-#     grid::Grid;
-#     latlim = (-Inf, Inf),
-#     longlim = (-Inf, Inf),
-#     datapath = GENDATAPATH,
-#     coordpath = GENCOORDPATH,
-#     pfactorfunc = pfacwavg,
-# )
-#     plants = get_gen_data(datapath, coordpath)
-#     plants = [
-#                 p for p in plants if p[1][1][1] > latlim[1] &&
-#                 p[1][1][1] < latlim[2] && p[1][1][2] > longlim[1] &&
-#                 p[1][1][2] < longlim[2]
-#             ]
-#     # Creating generators
-#     genbs = Vector(plants)
-#     for p in plants
-#         push!(
-#             genbs,
-#             [
-#                 Generator(
-#                     g[1],
-#                     g[2],
-#                     g[3],
-#                     g[4],
-#                     g[5],
-#                     g[6],
-#                     g[7],
-#                     g[8],
-#                     g[9],
-#                     g[10]
-#                 ) for g in p
-#             ]
-#         )
-#     end
-#     # Formatting generators
-#     for p in genbs
-#         for g in p
-#             format_gen!(g)
-#         end
-#     end
-#     # Creating generation buses
-#     for p in genbs
-#         op = filter(g -> g.status in ["OP", "SP"], p)
-#         push!(buses(grid), GenBus(length(buses(grid)) + 1, p, op, pfactorfunc))
-#     end
-# end
-
 # Here we will adopt transmission lines of type 'Line' with predefined values. We need
 # their predefined values because we do not have all properties required to create a
 # 'Line'. The use of 'DC Line' is precluded by the fact that, in pandapower, it is only
 # capable of unidirectional flow.
 const SAFE_LOAD_PERCENT = 100 # Maximum load allowed at lines and transformers.
 function add_line(pgrid::PyObject, b1::LoadBus, b2::LoadBus)
-    pp[:create_line](
+    pp.create_line(
         pgrid,
         from_bus = (b1.id - 1), # Adopting zero indexing because this is for Python.
         to_bus = (b2.id - 1), # Adopting zero indexing because this is for Python.
@@ -457,7 +392,7 @@ function add_line(pgrid::PyObject, b1::LoadBus, b2::LoadBus)
     )
 end
 function add_line(pgrid::PyObject, b1::LoadBus, b2::GenBus)
-    pp[:create_transformer](
+    pp.create_transformer(
         pgrid,
         hv_bus = (b2.id - 1), # Adopting zero indexing because this is for Python.
         lv_bus = (b1.id - 1), # Adopting zero indexing because this is for Python.
@@ -466,7 +401,7 @@ function add_line(pgrid::PyObject, b1::LoadBus, b2::GenBus)
     )
 end
 function add_line(pgrid::PyObject, b1::GenBus, b2::LoadBus)
-    pp[:create_transformer](
+    pp.create_transformer(
         pgrid,
         hv_bus = (b1.id - 1), # Adopting zero indexing because this is for Python.
         lv_bus = (b2.id - 1), # Adopting zero indexing because this is for Python.
@@ -475,7 +410,7 @@ function add_line(pgrid::PyObject, b1::GenBus, b2::LoadBus)
     )
 end
 function add_line(pgrid::PyObject, b1::GenBus, b2::GenBus)
-    pp[:create_line](
+    pp.create_line(
         pgrid,
         from_bus = (b1.id - 1), # Adopting zero indexing because this is for Python.
         to_bus = (b2.id - 1), # Adopting zero indexing because this is for Python.
@@ -497,78 +432,55 @@ Currently, grid voltages and line properties are ignored. This function places a
 voltage values.
 """
 function to_pandapower(grid::Grid,)
-    const LOAD_VOLT = 110 # kV # This is a crude approximation
-    const GEN_VOLT = 380 # kV # This is a crude approximation
+    LOAD_VOLT = 0.11 # mV, this is a crude approximation
+    GEN_VOLT = 0.38 # mV, this is a crude approximation
     voltage(bus::LoadBus) = LOAD_VOLT
     voltage(bus::GenBus) = GEN_VOLT
+
     # Create empty pandapower network
-    pgrid = pycall(pp[:create_empty_network], PyObject)
+    pgrid = pycall(pp.create_empty_network, PyObject)
+
     # Create buses
     for i in 1:length(buses(grid))
-        pp[:create_bus](
+        pp.create_bus(
             pgrid,
             voltage(buses(grid)[i]),
             index = (i - 1), # Adopting zero indexing because this is for Python.
             geodata = (buses(grid)[i].coords.lat, buses(grid)[i].coords.lon)
         ) # Despite what the documentation says, 'create_bus' requires voltage.
     end
+
     # Create loads and generators
     for i in 1:length(buses(grid))
         if isa(buses(grid)[i], LoadBus)
-            pp[:create_load](
+            pp.create_load(
                 pgrid,
                 bus = (i-1), # Adopting zero indexing because this is for Python.
-                p_kw = 1000*buses(grid)[i].load, # MW to kW
+                p_mw = buses(grid)[i].load,
                 controllable = false # for OPF
             )
         else
         # The type of the generator is being stored in 'name' instead
         # of in 'type' because Julia seems to have problems with a parameter called 'type'.
             for gen in buses(grid)[i].gens
-                pp[:create_gen](
+                pp.create_gen(
                     pgrid,
                     bus = (i-1), # Adopting zero indexing because this is for Python.
-                    p_kw = -1000 * gen.cap, # negative by pandapower convention
+                    p_mw = -gen.cap,  # Negative for generation
                     name = gen.tech,
-                    max_p_kw = -1000 * gen.minload, # min inverts with max because negative
-                    min_p_kw = -1000 * gen.cap,
+                    max_p_mw = -gen.minload,  # Min inverts with max because negative
+                    min_p_mw = -gen.cap,  # Negative for genereation
                     controllable = true, # for OPF
                 )
             end
         end
     end
-    # Create lines and transformers
-    line_types = ( # All pre-defined overhead line types. Seem to be for lower voltages.
-        "149-AL1/24-ST1A 10.0",
-        "149-AL1/24-ST1A 110.0",
-        "149-AL1/24-ST1A 20.0",
-        "15-AL1/3-ST1A 0.4",
-        "184-AL1/30-ST1A 110.0",
-        "184-AL1/30-ST1A 20.0",
-        "24-AL1/4-ST1A 0.4",
-        "243-AL1/39-ST1A 110.0",
-        "243-AL1/39-ST1A 20.0",
-        "305-AL1/39-ST1A 110.0",
-        "48-AL1/8-ST1A 0.4",
-        "48-AL1/8-ST1A 10.0",
-        "48-AL1/8-ST1A 20.0",
-        "490-AL1/64-ST1A 220.0",
-        "490-AL1/64-ST1A 380.0",
-        "94-AL1/15-ST1A 0.4",
-        "94-AL1/15-ST1A 10.0",
-        "94-AL1/15-ST1A 20.0",
-    )
-    lines_110 = (
-        "149-AL1/24-ST1A 110.0",
-        "184-AL1/30-ST1A 110.0",
-        "243-AL1/39-ST1A 110.0",
-        "305-AL1/39-ST1A 110.0",
-    )
+
     for ln in grid.trans_lines
         buses = unique(ln.connecting)
         add_line(pgrid, buses[1], buses[2])
     end
-    pp[:create_ext_grid](pgrid, 0, vm_pu=1, max_p_kw=0, min_p_kw=0) # Just so pandapower does
+    pp.create_ext_grid(pgrid, 0, vm_pu=1, max_p_kw=0, min_p_kw=0) # Just so pandapower does
                                                     # not throw an error when doing and OPF.
     return pgrid
 end
@@ -597,7 +509,7 @@ end
 Save a pandapower grid as `filename`. Pandapower requires `filename` to be a `.p` file.
 """
 function save_pp_grid(pgrid::PyObject, path::AbstractString)
-    pp[:to_pickle](pgrid, path)
+    pp.to_pickle(pgrid, path)
 end
 
 """
@@ -606,7 +518,7 @@ end
 Load a pandapower grid from `path`.
 """
 function load_pp_grid(path)
-    return pycall(pp[:from_pickle], PyObject,path)
+    return pycall(pp.from_pickle, PyObject,path)
 end
 
 # WARNING: exportJLD and loadJLD functions are not working properly yet.

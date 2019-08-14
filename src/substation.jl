@@ -13,9 +13,9 @@ mutable struct Substation <: Bus
     end
 end
 
-function Substation{T<:Real}(
+function Substation(
     id,
-    coords::Tuple{T,T},
+    coords::Tuple{T,T} where T <: Real,
     volts,
     load,
     gen,
@@ -39,8 +39,8 @@ function Substation(coords::LatLon, volts, load, gen, pop, con = Set(), group = 
     return Substation(-1, coords, volts, load, gen, pop, con, group)
 end
 
-function Substation{T<:Real}(
-    coords::Tuple{T,T},
+function Substation(
+    coords::Tuple{T,T} where T <: Real,
     volts,
     load,
     gen,
@@ -100,7 +100,7 @@ function ==(a::Substation, b::Substation)
         a.grouping == b.grouping &&
         a.generation == b.generation || return false
 
-        pair = (object_id(a), object_id(b))
+        pair = (objectid(a), objectid(b))
         if !(pair in compared)
             push!(compared, pair)
 

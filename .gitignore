@@ -1,19 +1,16 @@
-=======
-# Ignore system files
 *.swp
-.DS_Store
-
-# Ignore compiled files
 *.pyc
-
-# Ignore merge files
 *.orig
-
-# Julia related files
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
 
-# Documenter generated files
+.DS_Store
+.idea/*
+
+/build/*
+/data/dummy.json
+/deps/build.log
 /docs/build/
 /docs/site/
+/Manifest.toml

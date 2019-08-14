@@ -4,18 +4,21 @@ module SyntheticGrids
 # at load time ? :/
 ENV["NUMBA_DISABLE_JIT"] = 1
 
-using PyCall
-using JSON
-using CSV
 using AutoHashEquals
+using CSV
 using Geodesy
-using Missings
+using JSON
+using LinearAlgebra
+using PyCall
+using Random: seed!
+using SparseArrays
+using Statistics: Statistics, mean
 
 const pp = PyNULL()
 
 # https://github.com/JuliaPy/PyCall.jl#using-pycall-from-julia-modules
 function __init__()
-    copy!(pp, pyimport_conda("pandapower", "pandapower"))
+    copy!(pp, pyimport_conda("pandapower", "pandapower==2.1.0", "invenia"))
 end
 
 export
@@ -73,8 +76,8 @@ load_grid
 import Base.==
 import Base.show
 import Base.hash
-import Base.mean
 import Base.merge!
+
 global const PREC = 1.0e-6 # Precision for random number generation
 global const LARGE_GRID_N = 2000 # defines what is considered a large grid
 abstract type Bus end

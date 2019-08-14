@@ -13,8 +13,8 @@
                            # "OA" and "OS" - Out of service
 end
 
-function Generator{T <: Real}(
-        coords::Tuple{T,T},
+function Generator(
+        coords::Tuple{T,T} where T <: Real,
         volt,
         tech,
         cap,

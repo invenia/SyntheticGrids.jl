@@ -1,7 +1,7 @@
 """
     cluster_loads!(grid,nload)
 
-Execute aglomerative clustering of all load buses into 'nload' substations
+Execute agglomerative clustering of all load buses into 'nload' substations
 using geographic distances as metric.
 """
 function cluster_loads!(grid::Grid, nload)
@@ -25,7 +25,7 @@ function cluster_loads!(grid::Grid, nload)
     all_ids = [l.id for l in loads]
     id2ind = Dict{Int, Int}()
     for id in all_ids
-        id2ind[id] = findfirst(all_ids, id)
+        id2ind[id] = findfirst(==(id), all_ids)
     end
     m = length(loads)
     sum_pops = fill(0, (m, m))
@@ -34,21 +34,21 @@ function cluster_loads!(grid::Grid, nload)
     end
     sum_pops = Symmetric(sum_pops, :L)
     sub_dist = Matrix(load_sub_dist(substations(grid), load_dist, id2ind, sum_pops))
-    const POPLIMIT = 200000 # population limit for a substation (=> 400MW load)
+    POPLIMIT = 200000 # population limit for a substation (=> 400MW load)
 
     while length(substations(grid)) > nload
         n = length(substations(grid))
         ok = false
         i = j = -1
         while true
-            m = indmin(sub_dist)
+            m = argmin(sub_dist)
             if sub_dist[m] == Inf # Can't cluster anymore without going over POPLIMIT
                 warn("Can't cluster anymore without going over population limit!")
                 warn("Stopping clustering process before target number is reached")
                 nload = Inf
                 break
             end
-            i, j = ind2sub(size(sub_dist), m)
+            i, j = Tuple(m)
             if (substations(grid)[i].population + substations(grid)[j].population) < POPLIMIT
                 break
             else # this keeps loads from clustering beyond the population limit
@@ -62,13 +62,14 @@ function cluster_loads!(grid::Grid, nload)
         merge!(grid, i, j)
         # Update substation distances
         mask = fill(true, (n, n))
-        mask[j, :] = false # Eliminate rows and columns corresponding to the
-        mask[:, j] = false # deleted substation
+        mask[j, :] .= false # Eliminate rows and columns corresponding to the
+        mask[:, j] .= false # deleted substation
         sub_dist = reshape(sub_dist[mask], (n - 1, n - 1)) # Remove old dists
         i = i > j ? i - 1 : i # Update i to the new length
         update_sub_dist!(sub_dist, i, substations(grid), load_dist, id2ind, sum_pops)
     end
 end
+
 
 """
     fill_gen!(sub, gens, MW)
@@ -79,7 +80,7 @@ until generation threshold 'MW' is reached.
 function fill_gen!(sub, gens, MW)
     dists = [haversine(sub, g) for g in gens]
     while sub.generation < MW
-        m = indmin(dists)
+        m = argmin(dists)
         sub.generation += gens[m].generation
         sub.voltages = [v for v in Set(vcat(sub.voltages, gens[m].voltage))]
         push!(sub.grouping, gens[m])
@@ -96,8 +97,9 @@ Create 'nboth' substations with both load and generation, chosen randomly.
 function cluster_load_gen!(grid::Grid, nboth)
     gens = [bus for bus in buses(grid) if isa(bus, GenBus)]
     nb = 0
-    srand(grid.seed + 66) # Just so we don't keep returning to the same point.
+    seed!(grid.seed + 66) # Just so we don't keep returning to the same point.
     s = rand(1:length(substations(grid)))
+    e = MathConstants.e
     rrange = e^(-1):PREC:e
     while nb < nboth
         while substations(grid)[s].generation > 0 # ensures we are drawing a
@@ -124,7 +126,7 @@ function cluster_gens!(grid::Grid, ngen)
     gens = filter(buses(grid)) do bus
         isa(bus, GenBus) && !(bus in gen_both)
     end
-    g_subs = Array{Substation}(length(gens))
+    g_subs = Array{Substation}(undef, length(gens))
     st = length(substations(grid))
     for (i, g) in enumerate(gens) # creates substations for the remaining generators
         substation = Substation(
@@ -140,15 +142,15 @@ function cluster_gens!(grid::Grid, ngen)
     end
     dists = distance(g_subs)
     while length(g_subs) > ngen
-        m = indmin(dists)
+        m = argmin(dists)
         n = length(g_subs)
-        ii, jj = ind2sub(size(dists), m)
+        ii, jj = Tuple(m)
         merge!(grid, ii + st, jj + st)
         deleteat!(g_subs, jj)
         # Update substation distances
         mask = fill(true, (n, n))
-        mask[jj, :] = false # Eliminate rows and columns corresponding to the
-        mask[:, jj] = false # deleted substation
+        mask[jj, :] .= false # Eliminate rows and columns corresponding to the
+        mask[:, jj] .= false # deleted substation
         dists = reshape(dists[mask], (n - 1, n - 1)) # Remove old dists
         ii = ii > jj ? ii - 1 : ii # Update i to the new length
         update_distance!(dists, g_subs, ii)

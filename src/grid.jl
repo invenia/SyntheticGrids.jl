@@ -219,12 +219,6 @@ end
 
 Grid() = Grid(rand(0:round(Int, typemax(Int) / 2)))
 
-function mean(v::Vector{LatLon})
-    xmean = mean([c.lat for c in v])
-    ymean = mean([c.lon for c in v])
-    return LatLon(xmean, ymean)
-end
-
 """
     twst!(grid, k)
 
@@ -237,9 +231,9 @@ function twst!(grid::Grid, k)
     node_locations = [b.coords for b in buses(grid)]
     n = length(buses(grid))
     ind = collect(1:n)
-    permut = Vector{Int}(n)
+    permut = Vector{Int}(undef, n)
     unorm_prob = [haversine(bus.coords, mean(node_locations))^(-k) for bus in buses(grid)]
-    srand(grid.seed + 15)
+    seed!(grid.seed + 15) # Just so we don't keep returning to the same point.
     rand_range = 0:PREC:(1-PREC)
     for step in 1:n # sets node permutation
         probs = unorm_prob / sum(unorm_prob)
@@ -304,7 +298,7 @@ function reinforce!(grid::Grid, m, a, b, g, t, N)
     end
     unorm_probs = Real[]
     inds = Int[]
-    degrees = sum(grid.bus_conn, 1) # this gives the node degrees
+    degrees = sum(grid.bus_conn, dims=1) # this gives the node degrees
     degrees = float(reshape(degrees, length(degrees))) # Just so we can zip it later. Using
     # float here in order to avoid problems when doing Int^(-t).
     if n >= LARGE_GRID_N # only sample nodes with degree < 3
@@ -314,7 +308,7 @@ function reinforce!(grid::Grid, m, a, b, g, t, N)
         unorm_probs = [degrees[i]^(-t)*av_dist[i]^(-a) for i in 1:n]
         inds = collect(1:n)
     end
-    srand(grid.seed + 479) # Just so we don't keep returning to the same point.
+    seed!(grid.seed + 479) # Just so we don't keep returning to the same point.
     rand_range = 0:PREC:(1-PREC)
     count = 1
     while count <= (m - n + 1)
@@ -416,7 +410,7 @@ This function will only work after the grid has been connected through the
 connect!() function.
 """
 function create_lines!(grid::Grid; impedfunc = linear_imped, capfunc = volt_cap)
-    srand(grid.seed + 16) # Just so we don't keep returning to the same point.
+    seed!(grid.seed + 16) # Just so we don't keep returning to the same point.
     for j in 1:(length(buses(grid)) - 1), i in (j + 1):length(buses(grid))
         if grid.bus_conn[i, j] == true
             a, b = buses(grid)[i], buses(grid)[j]

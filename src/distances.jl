@@ -10,13 +10,13 @@ end
 
 
 """
-    haversine{T<:Real}(c1::Tuple{T,T}, c2::Tuple{T,T})
+    haversine(c1::Tuple{T,T}, c2::Tuple{T,T}) where T <: Real
 
 Compute distance between two pairs of latitude and longitude using the
 haversine formula.
 """
-function haversine{T<:Real}(c1::Tuple{T,T}, c2::Tuple{T,T})
-    const AVG_RADIUS = 6369.783 # Earth radius at 38.8 latitude (in km).
+function haversine(c1::Tuple{T,T}, c2::Tuple{T,T}) where T <: Real
+    AVG_RADIUS = 6369.783 # Earth radius at 38.8 latitude (in km).
     d = 2 * AVG_RADIUS * asin(sqrt(sind((c2[1] - c1[1]) / 2)^2
         + cosd(c2[1]) * cosd(c1[1]) * sind((c2[2] - c1[2]) / 2)^2))
     return d
@@ -36,7 +36,7 @@ function haversine(b1::Bus, b2::Bus)
     return haversine(b1.coords, b2.coords)
 end
 
-function mean{T <: Real}(v::Vector{LatLon{T}})
+function Statistics.mean(v::Vector{<:LatLon})
     xmean = mean([c.lat for c in v])
     ymean = mean([c.lon for c in v])
     return LatLon(xmean, ymean)
@@ -51,13 +51,13 @@ REFERENCE: Birchfield, Adam B., et al. "Grid Structural Characteristics as
 Validation Criteria for Synthetic Networks."
 IEEE Transactions on Power Systems (2016).
 """
-function subs_dist{T <: Real}(
+function subs_dist(
     inds1::Vector{Int},
     inds2::Vector{Int},
     b_dist::Matrix{T},
     id2ind::Dict{Int, Int},
     sum_pops::Symmetric{Int}
-)
+) where T <: Real
     dist = 0
     totw = 0
     for i1 in inds1
@@ -122,7 +122,7 @@ function update_sub_dist!(
     end
 end
 
-function distance{T<:Bus}(buses::Vector{T})
+function distance(buses::Vector{T}) where T <: Bus
     n = length(buses)
     dist_mat = fill(Inf, (n, n))
     for b1 in 1:(n - 1), b2 in (b1 + 1):n
@@ -132,7 +132,7 @@ function distance{T<:Bus}(buses::Vector{T})
     return dist_mat
 end
 
-function update_distance!{T<:Bus}(dist_mat::Matrix{Float64}, buses::Vector{T}, i::Int)
+function update_distance!(dist_mat::Matrix{Float64}, buses::Vector{T}, i::Int) where T <: Bus
     n = length(buses)
     ran = [c for c in collect(1:n) if c != i]
     for b in ran
