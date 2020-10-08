@@ -15,6 +15,7 @@ using JSON
     GRIDPATH = joinpath(@__DIR__, "..", "data", "testgrid.json")
 
     function baseline_grid(seed=666, latlim=LATLIM, longlim=LONGLIM)
+        print(type(Grid(seed)))
         grid = Grid(seed)
         place_loads_from_zips!(grid; latlim=latlim, longlim=longlim)
         place_gens_from_data!(grid; latlim=latlim, longlim=longlim)
@@ -101,7 +102,7 @@ using JSON
                 distance(substations(grid))
                 ) ≈ 111.6094877525516
             @test robustness_line(grid.sub_conn, 10) > 1
-            @test robustness_node(grid.sub_conn, 10) > 1
+            @testnumpy robustness_node(grid.sub_conn, 10) > 1
         end
 
         @testset "Test seeding and object comparison" begin
