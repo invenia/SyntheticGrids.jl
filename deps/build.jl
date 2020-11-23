@@ -4,15 +4,19 @@ ENV["PYTHON"] = "/usr/bin/python3.6"
 pkg"build PyCall"
 using PyCall
 using Conda
-print(Conda.PYTHONDIR)
+
 
 # Configure PyCall.jl to use Conda.jl's Python
 #print(ENV['PYTHON'])
 # We need install a specific version of llvmlite which supports the same minor version of
 # llvm used with Julia. https://github.com/numba/llvmlite#compatibility
 const LLVM_VERSION = Base.libllvm_version
-const LLVMLITE_VERSION = if LLVM_VERSION > v"7.0.0"
+const LLVMLITE_VERSION = if LLVM_VERSION >= v"10.0.0"
+    v"0.34.0"
+elseif LLVM_VERSION >= v"9.0.0"
     v"0.33.0"
+elseif LLVM_VERSION >= v"7.0.0"
+    v"0.29.0"
 elseif LLVM_VERSION >= v"6.0.0"
     v"0.26.0"
 elseif LLVM_VERSION >= v"5.0.0"
@@ -38,14 +42,14 @@ Conda.add("python==3.7.0")
 
 Conda.add_channel("conda-forge")
 Conda.add("numpy==1.19.1")
-print(Conda.PYTHONDIR)
+
 
 Conda.add_channel("numba")  # channel containing llvmlite
 Conda.add("llvmlite==$LLVMLITE_VERSION")  # https://github.com/numba/llvmlite
 Conda.add_channel("invenia")
 Conda.add("pandapower==2.1.0")
 @info "Verifying pandapower install..."
-print(Conda.PYTHONDIR)
+
 python_bin = joinpath(Conda.PYTHONDIR, "python")
 run(`$python_bin -c "import pandapower, pandapower.networks, pandapower.topology, pandapower.plotting, pandapower.converter, pandapower.estimation"`)
 run(`$python_bin -c "from pandapower.networks import case9; case9()"`)
