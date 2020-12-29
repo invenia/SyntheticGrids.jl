@@ -1,6 +1,6 @@
 #using Conda
 
-ENV["PYTHON"] = "/usr/bin/python3.6"
+ENV["PYTHON"] = ""
 pkg"build PyCall"
 using PyCall
 using Conda
